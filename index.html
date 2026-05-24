@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>NexusAI – Assistant Local</title>
+<title>DeepSeek AI – Assistant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -29,7 +29,6 @@
 }
 html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;}
 
-/* BG */
 .bg-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .orb{position:absolute;border-radius:50%;filter:blur(100px);animation:orb-move 12s ease-in-out infinite;}
 .orb1{width:600px;height:600px;background:radial-gradient(circle,rgba(79,142,255,0.15) 0%,transparent 65%);top:-150px;left:-100px;}
@@ -38,7 +37,6 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 @keyframes orb-move{0%,100%{transform:translate(0,0) scale(1);}40%{transform:translate(25px,-20px) scale(1.04);}70%{transform:translate(-15px,18px) scale(0.97);}}
 .scanlines{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.008) 2px,rgba(255,255,255,0.008) 4px);}
 
-/* LAYOUT */
 .app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh;max-width:800px;margin:0 auto;}
 
 /* TOPBAR */
@@ -53,24 +51,18 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 .brand{display:flex;align-items:center;gap:10px;}
 .brand-gem{
   width:36px;height:36px;border-radius:11px;
-  background:linear-gradient(135deg,var(--a1),var(--a2));
+  background:linear-gradient(135deg,var(--a1),rgba(0,212,170,0.8));
   display:flex;align-items:center;justify-content:center;
-  font-size:18px;font-weight:700;color:#fff;
+  font-size:16px;font-weight:700;color:#fff;
   box-shadow:0 0 22px rgba(79,142,255,0.4);
-  letter-spacing:-1px;
 }
 .brand-name{font-size:18px;font-weight:700;letter-spacing:-.4px;}
 .brand-tag{
   font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;
-  background:rgba(0,212,170,0.12);color:var(--a2);border:1px solid rgba(0,212,170,0.2);
+  background:rgba(79,142,255,0.12);color:var(--a1);border:1px solid rgba(79,142,255,0.2);
   letter-spacing:.5px;
 }
-
-/* STATUS BAR */
-.status-bar{
-  display:flex;align-items:center;gap:8px;
-  margin-left:auto;
-}
+.status-bar{display:flex;align-items:center;gap:8px;margin-left:auto;}
 .status-pill{
   display:flex;align-items:center;gap:6px;
   padding:5px 12px;border-radius:100px;
@@ -80,75 +72,29 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 }
 .status-dot{
   width:7px;height:7px;border-radius:50%;
-  background:var(--tx3);transition:all .4s;
-  flex-shrink:0;
+  background:var(--tx3);transition:all .4s;flex-shrink:0;
 }
-.status-dot.loading{background:var(--a4);box-shadow:0 0 8px var(--a4);animation:pulse .8s ease-in-out infinite;}
 .status-dot.ready{background:var(--a2);box-shadow:0 0 8px var(--a2);}
 .status-dot.thinking{background:var(--a1);box-shadow:0 0 8px var(--a1);animation:pulse .6s ease-in-out infinite;}
 .status-dot.error{background:var(--a3);box-shadow:0 0 8px var(--a3);}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
 
-/* LOAD PANEL */
-.load-panel{
-  margin:20px;border-radius:20px;
-  border:1px solid var(--b2);
-  background:var(--s1);
-  backdrop-filter:blur(20px);
-  overflow:hidden;
-  transition:all .5s ease;
-  flex-shrink:0;
+/* MODEL SELECTOR */
+.model-bar{
+  display:flex;gap:6px;padding:8px 20px;
+  border-bottom:1px solid var(--b1);
+  background:rgba(7,7,14,0.5);
+  flex-shrink:0;overflow-x:auto;
+  flex-wrap:wrap;
 }
-.load-panel.hidden{display:none;}
-.load-inner{padding:20px 24px;}
-.load-title{font-size:15px;font-weight:600;color:var(--tx);margin-bottom:4px;}
-.load-desc{font-size:13px;color:var(--tx2);line-height:1.5;margin-bottom:16px;}
-
-.model-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
-.model-card{
-  padding:10px 12px;border-radius:var(--rsm);
-  border:1px solid var(--b1);background:var(--s1);
-  cursor:pointer;transition:all .2s;
-  display:flex;flex-direction:column;gap:3px;
+.model-bar::-webkit-scrollbar{height:0;}
+.mb-btn{
+  padding:6px 14px;border-radius:100px;border:1px solid var(--b1);background:var(--s1);
+  font-size:12px;font-weight:500;color:var(--tx2);cursor:pointer;transition:all .22s;
+  white-space:nowrap;font-family:'Outfit',sans-serif;
 }
-.model-card:hover{border-color:var(--b3);background:var(--s2);}
-.model-card.sel{border-color:rgba(79,142,255,0.4);background:rgba(79,142,255,0.08);}
-.mc-name{font-size:12px;font-weight:600;color:var(--tx);}
-.mc-size{font-size:10px;color:var(--tx3);}
-.mc-tag{
-  font-size:9px;font-weight:600;padding:2px 6px;border-radius:5px;
-  display:inline-block;margin-top:2px;
-}
-.tag-fast{background:rgba(0,212,170,0.15);color:var(--a2);}
-.tag-smart{background:rgba(79,142,255,0.15);color:var(--a1);}
-.tag-bal{background:rgba(245,166,35,0.15);color:var(--a4);}
-.mem-warn{
-  background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);
-  border-radius:var(--rsm);padding:10px 14px;margin-bottom:12px;
-  font-size:12px;color:var(--a4);line-height:1.6;
-}
-
-.load-btn{
-  width:100%;padding:12px;border-radius:var(--r);border:none;cursor:pointer;
-  background:linear-gradient(135deg,var(--a1),rgba(0,212,170,0.8));
-  color:#fff;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;
-  box-shadow:0 0 24px rgba(79,142,255,0.3);transition:all .25s;
-}
-.load-btn:hover{box-shadow:0 0 36px rgba(79,142,255,0.5);transform:translateY(-1px);}
-.load-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
-
-.progress-wrap{margin-top:14px;}
-.prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.prog-label{font-size:12px;color:var(--tx2);}
-.prog-pct{font-size:12px;color:var(--a1);font-weight:600;font-family:'JetBrains Mono',monospace;}
-.prog-track{height:4px;background:var(--s2);border-radius:2px;overflow:hidden;}
-.prog-fill{
-  height:100%;border-radius:2px;width:0%;
-  background:linear-gradient(90deg,var(--a1),var(--a2));
-  box-shadow:0 0 10px rgba(79,142,255,0.4);
-  transition:width .3s ease;
-}
-.prog-msg{margin-top:8px;font-size:11px;color:var(--tx3);font-family:'JetBrains Mono',monospace;}
+.mb-btn:hover{background:var(--s2);border-color:var(--b2);color:var(--tx);}
+.mb-btn.sel{background:rgba(79,142,255,0.12);border-color:rgba(79,142,255,0.35);color:var(--a1);}
 
 /* MESSAGES */
 .msgs{
@@ -159,18 +105,12 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 .msgs::-webkit-scrollbar{width:3px;}
 .msgs::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
 
-/* WELCOME */
 .welcome{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   flex:1;text-align:center;gap:16px;padding:30px 20px;
   animation:fadeUp .6s ease both;
 }
-.welcome-icon{
-  font-size:56px;
-  filter:drop-shadow(0 0 30px rgba(79,142,255,0.5));
-  animation:icon-pulse 3s ease-in-out infinite;
-}
-@keyframes icon-pulse{0%,100%{filter:drop-shadow(0 0 30px rgba(79,142,255,0.5));}50%{filter:drop-shadow(0 0 50px rgba(0,212,170,0.6));}}
+.welcome-icon{font-size:56px;filter:drop-shadow(0 0 30px rgba(79,142,255,0.5));}
 .welcome h1{font-size:28px;font-weight:700;letter-spacing:-.5px;}
 .welcome p{font-size:14px;color:var(--tx2);max-width:380px;line-height:1.65;}
 .quick-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:560px;margin-top:8px;}
@@ -185,7 +125,6 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 .qcard-d{font-size:11px;color:var(--tx2);margin-top:2px;line-height:1.5;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 
-/* MSG ROWS */
 .msg-row{display:flex;gap:11px;animation:fadeUp .28s ease both;}
 .msg-row.usr{flex-direction:row-reverse;}
 .av{
@@ -194,65 +133,31 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 }
 .av.ai-av{background:linear-gradient(135deg,rgba(79,142,255,0.25),rgba(0,212,170,0.2));border:1px solid rgba(79,142,255,0.25);}
 .av.usr-av{background:linear-gradient(135deg,rgba(255,95,160,0.2),rgba(245,166,35,0.15));border:1px solid rgba(255,95,160,0.18);}
-
 .msg-body{max-width:75%;display:flex;flex-direction:column;gap:5px;}
 .msg-row.usr .msg-body{align-items:flex-end;}
 .msg-name{font-size:11px;color:var(--tx3);font-weight:500;}
-
 .bbl{
   padding:12px 16px;border-radius:17px;
   font-size:14px;line-height:1.7;
 }
-.ai-bbl{
-  background:var(--s2);border:1px solid var(--b1);
-  border-radius:4px 17px 17px 17px;
-}
-.usr-bbl{
-  background:linear-gradient(135deg,rgba(79,142,255,0.2),rgba(0,212,170,0.1));
-  border:1px solid rgba(79,142,255,0.18);
-  border-radius:17px 4px 17px 17px;
-}
+.ai-bbl{background:var(--s2);border:1px solid var(--b1);border-radius:4px 17px 17px 17px;}
+.usr-bbl{background:linear-gradient(135deg,rgba(79,142,255,0.2),rgba(0,212,170,0.1));border:1px solid rgba(79,142,255,0.18);border-radius:17px 4px 17px 17px;}
 
-/* INLINE CODE */
-.bbl code{
-  background:rgba(79,142,255,0.14);padding:2px 6px;border-radius:5px;
-  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--a1);
-}
-/* CODE BLOCK */
+.bbl code{background:rgba(79,142,255,0.14);padding:2px 6px;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--a1);}
 .cblock{background:rgba(0,0,0,0.55);border:1px solid var(--b1);border-radius:11px;overflow:hidden;margin:8px 0;}
-.cblock-hdr{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:7px 14px;background:rgba(255,255,255,0.04);border-bottom:1px solid var(--b1);
-}
+.cblock-hdr{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:rgba(255,255,255,0.04);border-bottom:1px solid var(--b1);}
 .clang{font-size:10px;font-weight:700;color:var(--a1);font-family:'JetBrains Mono',monospace;letter-spacing:.5px;}
-.ccopy{
-  font-size:10px;padding:2px 8px;border-radius:5px;
-  border:1px solid var(--b1);background:none;color:var(--tx2);cursor:pointer;transition:all .18s;
-}
+.ccopy{font-size:10px;padding:2px 8px;border-radius:5px;border:1px solid var(--b1);background:none;color:var(--tx2);cursor:pointer;transition:all .18s;font-family:'Outfit',sans-serif;}
 .ccopy:hover{color:var(--tx);border-color:var(--b3);}
-.cblock pre{
-  padding:14px;font-family:'JetBrains Mono',monospace;
-  font-size:12px;line-height:1.75;color:#aab4cc;overflow-x:auto;white-space:pre-wrap;
-}
+.cblock pre{padding:14px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.75;color:#aab4cc;overflow-x:auto;white-space:pre-wrap;}
 .kw{color:#c792ea;}.str{color:#c3e88d;}.fn{color:#82aaff;}.num{color:#f78c6c;}.cm{color:#546e7a;}.op{color:#89ddff;}
 
-/* THINKING */
-.think-wrap{
-  background:rgba(79,142,255,0.05);border:1px solid rgba(79,142,255,0.12);
-  border-radius:var(--rsm);padding:10px 14px;margin:6px 0;
-  font-size:12px;color:var(--tx2);font-family:'JetBrains Mono',monospace;
-  line-height:1.6;
-}
-.think-label{font-size:10px;color:var(--a1);font-weight:600;letter-spacing:.8px;margin-bottom:5px;text-transform:uppercase;}
-
-/* TYPING */
 .typing{display:flex;gap:5px;padding:4px 2px;}
 .td{width:7px;height:7px;border-radius:50%;background:var(--a1);animation:td 1.1s ease-in-out infinite;}
 .td:nth-child(2){animation-delay:.18s;background:var(--a2);}
 .td:nth-child(3){animation-delay:.36s;background:var(--a3);}
 @keyframes td{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-7px);opacity:1;}}
 
-/* INPUT */
 .input-zone{
   border-top:1px solid var(--b1);padding:14px 20px;
   background:rgba(7,7,14,0.8);backdrop-filter:blur(30px);
@@ -264,10 +169,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   border-radius:18px;padding:10px 10px 10px 18px;
   transition:border-color .2s,box-shadow .2s;
 }
-.inp-wrap:focus-within{
-  border-color:rgba(79,142,255,0.4);
-  box-shadow:0 0 0 3px rgba(79,142,255,0.07),0 0 28px rgba(79,142,255,0.09);
-}
+.inp-wrap:focus-within{border-color:rgba(79,142,255,0.4);box-shadow:0 0 0 3px rgba(79,142,255,0.07),0 0 28px rgba(79,142,255,0.09);}
 #inp{
   flex:1;background:none;border:none;outline:none;
   color:var(--tx);font-family:'Outfit',sans-serif;font-size:14.5px;
@@ -287,7 +189,6 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 .btn-send:disabled{opacity:.38;cursor:not-allowed;transform:none;box-shadow:none;}
 .inp-hint{text-align:center;font-size:11px;color:var(--tx3);margin-top:8px;}
 
-/* TOAST */
 .toast{
   position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);
   background:var(--s3);border:1px solid var(--b2);backdrop-filter:blur(20px);
@@ -296,7 +197,6 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* STOP BTN */
 .btn-stop{
   padding:7px 16px;border-radius:100px;border:1px solid rgba(255,95,160,0.3);
   background:rgba(255,95,160,0.1);color:var(--a3);
@@ -306,15 +206,59 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 .btn-stop.vis{display:block;}
 .btn-stop:hover{background:rgba(255,95,160,0.18);}
 
+/* API KEY SETTINGS */
+.settings-btn{
+  width:32px;height:32px;border-radius:8px;border:1px solid var(--b1);background:var(--s1);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--tx2);transition:all .2s;flex-shrink:0;
+}
+.settings-btn:hover{background:var(--s2);border-color:var(--b2);color:var(--tx);}
+
+.modal-overlay{
+  position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.show{display:flex;}
+.modal-box{
+  background:var(--bg2);border:1px solid var(--b2);border-radius:20px;
+  max-width:460px;width:100%;padding:28px 30px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);animation:fadeUp .25s ease both;
+}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:6px;}
+.modal-desc{font-size:13px;color:var(--tx2);line-height:1.6;margin-bottom:18px;}
+.modal-label{font-size:12px;font-weight:600;color:var(--tx2);margin-bottom:5px;display:block;}
+.modal-input{
+  width:100%;padding:10px 14px;border-radius:var(--rsm);
+  border:1px solid var(--b2);background:var(--s2);
+  color:var(--tx);font-family:'JetBrains Mono',monospace;font-size:13px;
+  outline:none;transition:border-color .2s;
+}
+.modal-input:focus{border-color:var(--a1);}
+.modal-actions{display:flex;gap:10px;margin-top:18px;}
+.modal-btn{
+  flex:1;padding:10px;border-radius:var(--rsm);border:none;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;
+  font-family:'Outfit',sans-serif;
+}
+.modal-btn.primary{background:linear-gradient(135deg,var(--a1),rgba(0,212,170,0.8));color:#fff;}
+.modal-btn.primary:hover{box-shadow:0 0 20px rgba(79,142,255,0.3);}
+.modal-btn.sec{background:var(--s2);border:1px solid var(--b1);color:var(--tx2);}
+.modal-btn.sec:hover{background:var(--s3);}
+.modal-warn{
+  background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);
+  border-radius:var(--rsm);padding:10px 14px;margin-bottom:16px;
+  font-size:12px;color:var(--a4);line-height:1.6;
+}
+
 @media(max-width:600px){
-  .model-grid{grid-template-columns:1fr 1fr;}
   .msg-body{max-width:88%;}
   .quick-wrap{grid-template-columns:1fr;}
   .welcome h1{font-size:22px;}
   .topbar{padding:12px 14px;}
   .input-zone{padding:12px 14px;}
   .msgs{padding:14px;}
-  .load-inner{padding:16px;}
+  .model-bar{padding:6px 14px;flex-wrap:nowrap;}
+  .modal-box{padding:20px;}
 }
 </style>
 </head>
@@ -327,67 +271,35 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 </div>
 
 <div class="app">
-
   <!-- TOPBAR -->
   <header class="topbar">
     <div class="brand">
-      <div class="brand-gem">N</div>
-      <span class="brand-name">NexusAI</span>
-      <span class="brand-tag">LOCAL</span>
+      <div class="brand-gem">D</div>
+      <span class="brand-name">DeepSeek AI</span>
+      <span class="brand-tag">API</span>
     </div>
     <div class="status-bar">
       <div class="status-pill" id="statusPill">
         <div class="status-dot" id="statusDot"></div>
         <span id="statusTxt">Prêt</span>
       </div>
+      <button class="settings-btn" onclick="openSettings()" title="Paramètres API">⚙</button>
     </div>
   </header>
 
-  <!-- LOAD PANEL -->
-  <div class="load-panel" id="loadPanel">
-    <div class="load-inner">
-      <div class="load-title">🧠 Choisir un modèle IA local</div>
-      <div class="load-desc">Le modèle tourne <strong>100% dans votre navigateur</strong> via WebGPU — aucun serveur, aucune clé API. Commencez par <strong>TinyLlama</strong> si vous avez peu de RAM GPU.</div>
-
-      <div class="mem-warn" id="memWarn" style="display:none;"></div>
-
-      <div class="model-grid">
-        <div class="model-card sel" data-model="TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC" onclick="selModel(this)">
-          <div class="mc-name">TinyLlama</div>
-          <div class="mc-size">1.1B · ~620 MB</div>
-          <span class="mc-tag tag-fast">⚡ LÉGER</span>
-        </div>
-        <div class="model-card" data-model="gemma-2-2b-it-q4f16_1-MLC" onclick="selModel(this)">
-          <div class="mc-name">Gemma 2B</div>
-          <div class="mc-size">2B · ~1.4 GB</div>
-          <span class="mc-tag tag-bal">⚖ ÉQUILIBRÉ</span>
-        </div>
-        <div class="model-card" data-model="Phi-3-mini-4k-instruct-q4f32_1-MLC" onclick="selModel(this)">
-          <div class="mc-name">Phi-3 Mini</div>
-          <div class="mc-size">3.8B · ~2.2 GB</div>
-          <span class="mc-tag tag-smart">🧠 PUISSANT</span>
-        </div>
-      </div>
-
-      <button class="load-btn" id="loadBtn" onclick="loadModel()">⚡ Charger le modèle</button>
-
-      <div class="progress-wrap" id="progWrap" style="display:none;">
-        <div class="prog-row">
-          <span class="prog-label" id="progLabel">Initialisation…</span>
-          <span class="prog-pct" id="progPct">0%</span>
-        </div>
-        <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
-        <div class="prog-msg" id="progMsg"></div>
-      </div>
-    </div>
+  <!-- MODEL BAR -->
+  <div class="model-bar" id="modelBar">
+    <button class="mb-btn sel" data-model="deepseek-chat" data-temp="0.7" onclick="selModel(this)">🧠 DeepSeek-V3</button>
+    <button class="mb-btn" data-model="deepseek-reasoner" data-temp="0.5" onclick="selModel(this)">🔍 DeepSeek-R1</button>
+    <button class="mb-btn" data-model="deepseek-chat" data-temp="1.0" onclick="selModel(this)">🎨 DeepSeek Créatif</button>
   </div>
 
   <!-- MESSAGES -->
   <section class="msgs" id="msgs">
     <div class="welcome" id="welcome">
-      <div class="welcome-icon">🤖</div>
-      <h1>NexusAI — 100% Local</h1>
-      <p>Un vrai LLM qui tourne dans votre navigateur. Aucune API, aucun serveur. Chargez un modèle ci-dessus pour commencer.</p>
+      <div class="welcome-icon">🧠</div>
+      <h1>DeepSeek AI</h1>
+      <p>Assistant IA propulsé par DeepSeek. Rapide, puissant et gratuit avec votre clé API.</p>
       <div class="quick-wrap">
         <div class="qcard" onclick="quick('Explique-moi l\'intelligence artificielle simplement')">
           <div class="qcard-ico">🧠</div>
@@ -399,15 +311,15 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
           <div class="qcard-t">Générer du code</div>
           <div class="qcard-d">React, JS, Python et plus</div>
         </div>
-        <div class="qcard" onclick="quick('Donne-moi 5 idées de startup innovantes en 2025')">
+        <div class="qcard" onclick="quick('Donne-moi 5 idées de startup innovantes')">
           <div class="qcard-ico">🚀</div>
           <div class="qcard-t">Idées créatives</div>
           <div class="qcard-d">Business, projets, innovations</div>
         </div>
-        <div class="qcard" onclick="quick('Traduis en anglais : Bonjour, comment ça va ?')">
-          <div class="qcard-ico">🌍</div>
-          <div class="qcard-t">Traduction</div>
-          <div class="qcard-d">Toutes les langues</div>
+        <div class="qcard" onclick="quick('Résous ce problème pas à pas: Si 3x + 7 = 22, que vaut x ?')">
+          <div class="qcard-ico">🔢</div>
+          <div class="qcard-t">Raisonnement</div>
+          <div class="qcard-d">Maths, logique, résonnement</div>
         </div>
       </div>
     </div>
@@ -420,57 +332,55 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   <div class="input-zone">
     <div class="inp-wrap">
       <textarea id="inp" rows="1" placeholder="Posez votre question…" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
-      <button class="btn-send" id="btnSend" onclick="sendMsg()" disabled>➤</button>
+      <button class="btn-send" id="btnSend" onclick="sendMsg()">➤</button>
     </div>
-    <div class="inp-hint" id="inpHint">⏳ Chargez d'abord un modèle pour commencer</div>
+    <div class="inp-hint" id="inpHint">Shift+Enter pour nouvelle ligne · Enter pour envoyer</div>
   </div>
-
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- WebLLM -->
-<script type="module">
-import * as webllm from "https://esm.run/@mlc-ai/web-llm@0.2.79";
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal-box">
+    <div class="modal-title">⚙ Paramètres API</div>
+    <div class="modal-desc">Configurez votre clé API DeepSeek. La clé est stockée uniquement dans votre navigateur (localStorage).</div>
+    <div class="modal-warn">⚠️ Ne partagez jamais votre clé API. Elle est privée et reste dans votre navigateur.</div>
+    <label class="modal-label">Clé API DeepSeek</label>
+    <input class="modal-input" id="apiKeyInput" type="password" placeholder="sk-..." spellcheck="false">
+    <div class="modal-actions">
+      <button class="modal-btn sec" onclick="closeSettings()">Annuler</button>
+      <button class="modal-btn primary" onclick="saveSettings()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
 
-// ── STATE ──
-let engine = null;
+<script>
+// ══════════════════════════════════════════
+// CONFIGURATION
+// ══════════════════════════════════════════
+// API DeepSeek : https://api.deepseek.com
+// La clé est stockée dans localStorage.
+// Valeur par défaut (celle que tu as fournie) :
+const DEFAULT_API_KEY = "sk-d2d3e36ce6a24189ac828738071f064f";
+const API_URL = "https://api.deepseek.com/v1/chat/completions";
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let apiKey = localStorage.getItem('ds_api_key') || DEFAULT_API_KEY;
+let selectedModel = "deepseek-chat";
+let temperature = 0.7;
 let generating = false;
-let selectedModel = "TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC";
 let abortController = null;
+let conversationHistory = [];
 
-// Detect available GPU memory and warn if low
-async function checkMemory() {
-  const warn = document.getElementById('memWarn');
-  try {
-    if (!navigator.gpu) {
-      warn.style.display = 'block';
-      warn.innerHTML = '⚠️ <strong>WebGPU non disponible</strong> — Utilisez Chrome 113+ ou Edge 113+. Safari ne supporte pas encore WebGPU.';
-      document.getElementById('loadBtn').disabled = true;
-      return;
-    }
-    const adapter = await navigator.gpu.requestAdapter();
-    if (!adapter) {
-      warn.style.display = 'block';
-      warn.innerHTML = '⚠️ <strong>GPU non accessible</strong> — Activez WebGPU dans les flags de Chrome : <code>chrome://flags/#enable-unsafe-webgpu</code>';
-      return;
-    }
-    const info = adapter.limits;
-    const maxBuf = info.maxBufferSize || 0;
-    const gbAvail = (maxBuf / 1e9).toFixed(1);
-    if (maxBuf > 0 && maxBuf < 1.2e9) {
-      warn.style.display = 'block';
-      warn.innerHTML = `⚠️ <strong>Mémoire GPU limitée (~${gbAvail} GB)</strong> — Seul <em>TinyLlama</em> est recommandé. Fermez les autres onglets pour libérer de la mémoire.`;
-      // Force-select TinyLlama
-      document.querySelectorAll('.model-card').forEach(c => c.classList.remove('sel'));
-      document.querySelector('[data-model="TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC"]').classList.add('sel');
-      selectedModel = "TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC";
-    }
-  } catch(e) { /* silent */ }
+// Save API key to localStorage if it's the default
+if (!localStorage.getItem('ds_api_key')) {
+  localStorage.setItem('ds_api_key', apiKey);
 }
-checkMemory();
 
-const SYSTEM_PROMPT = `Tu es NexusAI, un assistant IA brillant, précis et polyvalent. Tu réponds en français par défaut (ou dans la langue de l'utilisateur).
+const SYSTEM_PROMPT = `Tu es DeepSeek AI, un assistant IA brillant, précis et polyvalent. Tu réponds en français par défaut (ou dans la langue de l'utilisateur).
 Tu es capable de :
 - Répondre à toutes les questions de connaissance générale, science, histoire, culture
 - Écrire, déboguer et expliquer du code (Python, JS, React, HTML, CSS, etc.)
@@ -481,86 +391,56 @@ Tu es capable de :
 Quand tu écris du code, utilise toujours des blocs Markdown avec le langage spécifié.
 Sois concis mais complet. Commence tes réponses directement sans phrases introductives inutiles.`;
 
-const history = [{ role: "system", content: SYSTEM_PROMPT }];
-
-// ── EXPOSE TO GLOBAL ──
-window.__webllm = { engine: null };
-
-window.selModel = function(card) {
-  document.querySelectorAll('.model-card').forEach(c => c.classList.remove('sel'));
-  card.classList.add('sel');
-  selectedModel = card.dataset.model;
+// ══════════════════════════════════════════
+// MODEL SELECTION
+// ══════════════════════════════════════════
+window.selModel = function(btn) {
+  document.querySelectorAll('.mb-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  selectedModel = btn.dataset.model;
+  temperature = parseFloat(btn.dataset.temp) || 0.7;
+  toast('✓ Mode sélectionné : ' + btn.textContent.trim());
 };
 
-window.loadModel = async function() {
-  const btn = document.getElementById('loadBtn');
-  const progWrap = document.getElementById('progWrap');
-  btn.disabled = true;
-  btn.textContent = '⏳ Chargement…';
-  progWrap.style.display = 'block';
-  setStatus('loading', 'Téléchargement…');
-
-  try {
-    const initProgress = (report) => {
-      const pct = Math.round((report.progress || 0) * 100);
-      document.getElementById('progFill').style.width = pct + '%';
-      document.getElementById('progPct').textContent = pct + '%';
-      document.getElementById('progLabel').textContent = report.text || 'Chargement…';
-      document.getElementById('progMsg').textContent = report.timeElapsed ? `${report.timeElapsed.toFixed(1)}s` : '';
-    };
-
-    engine = await webllm.CreateMLCEngine(selectedModel, {
-      initProgressCallback: initProgress,
-    });
-    window.__webllm.engine = engine;
-
-    setStatus('ready', 'Modèle prêt');
-    document.getElementById('loadPanel').classList.add('hidden');
-    document.getElementById('btnSend').disabled = false;
-    document.getElementById('inpHint').textContent = 'Shift+Enter pour nouvelle ligne · Enter pour envoyer';
-    document.getElementById('inp').focus();
-    hideWelcome();
-    addMsg('ai', `✅ **${selectedModel.split('-').slice(0,2).join(' ')}** chargé et prêt !\n\nJe tourne entièrement dans votre navigateur — aucune donnée ne quitte votre appareil. Posez-moi n'importe quelle question !`);
-    toast('✓ Modèle prêt !');
-  } catch(e) {
-    console.error(e);
-    setStatus('error', 'Erreur');
-    btn.disabled = false;
-    btn.textContent = '↺ Réessayer';
-    progWrap.style.display = 'none';
-
-    const msg = e.message || String(e);
-    const isOOM = msg.toLowerCase().includes('memory') || msg.toLowerCase().includes('oom') || msg.toLowerCase().includes('out of') || msg.toLowerCase().includes('gpu');
-    const warn = document.getElementById('memWarn');
-    warn.style.display = 'block';
-
-    if (isOOM) {
-      warn.innerHTML = `🔴 <strong>Mémoire insuffisante</strong> — Votre GPU n'a pas assez de mémoire pour ce modèle.<br><br>
-      ✅ <strong>Solutions :</strong><br>
-      • Sélectionnez <em>TinyLlama (620 MB)</em> — le plus léger<br>
-      • Fermez tous les autres onglets du navigateur<br>
-      • Fermez les autres applications (Discord, Spotify…)<br>
-      • Redémarrez Chrome puis réessayez`;
-      // Auto-select TinyLlama
-      document.querySelectorAll('.model-card').forEach(c => c.classList.remove('sel'));
-      document.querySelector('[data-model="TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC"]').classList.add('sel');
-      selectedModel = "TinyLlama-1.1B-Chat-v1.0-q4f16_1-MLC";
-      btn.textContent = '⚡ Charger TinyLlama (recommandé)';
-    } else {
-      warn.innerHTML = `🔴 <strong>Erreur :</strong> ${msg.slice(0, 120)}<br><br>Essayez de rafraîchir la page ou choisissez un modèle plus léger.`;
-    }
-    toast('❌ ' + (isOOM ? 'Mémoire insuffisante — essayez TinyLlama' : msg.slice(0, 50)));
+// ══════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════
+window.openSettings = function() {
+  document.getElementById('apiKeyInput').value = apiKey;
+  document.getElementById('settingsModal').classList.add('show');
+};
+window.closeSettings = function() {
+  document.getElementById('settingsModal').classList.remove('show');
+};
+window.saveSettings = function() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key || !key.startsWith('sk-')) {
+    toast('⚠️ Clé API invalide (doit commencer par sk-)');
+    return;
   }
+  apiKey = key;
+  localStorage.setItem('ds_api_key', apiKey);
+  closeSettings();
+  toast('✓ Clé API enregistrée !');
 };
 
+// ══════════════════════════════════════════
+// SEND MESSAGE
+// ══════════════════════════════════════════
 window.sendMsg = async function() {
   const inp = document.getElementById('inp');
   const text = inp.value.trim();
-  if (!text || generating || !engine) return;
+  if (!text || generating) return;
+
+  // Check API key
+  if (!apiKey || !apiKey.startsWith('sk-')) {
+    openSettings();
+    toast('⚠️ Configurez d\'abord votre clé API');
+    return;
+  }
 
   hideWelcome();
   addMsg('user', text);
-  history.push({ role: 'user', content: text });
   inp.value = ''; inp.style.height = 'auto';
 
   generating = true;
@@ -574,33 +454,90 @@ window.sendMsg = async function() {
   let currentBubble = null;
 
   try {
-    const stream = await engine.chat.completions.create({
-      messages: history,
-      stream: true,
-      temperature: 0.72,
-      top_p: 0.93,
-      max_tokens: 1024,
+    const messages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...conversationHistory,
+      { role: 'user', content: text }
+    ];
+
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + apiKey
+      },
+      body: JSON.stringify({
+        model: selectedModel,
+        messages: messages,
+        stream: true,
+        temperature: temperature,
+        max_tokens: 4096
+      }),
+      signal: abortController.signal
     });
+
+    if (!response.ok) {
+      const errData = await response.text();
+      let errMsg = `Erreur ${response.status}`;
+      try {
+        const json = JSON.parse(errData);
+        errMsg = json.error?.message || json.message || errMsg;
+      } catch(e) {}
+      throw new Error(errMsg);
+    }
 
     removeTyping(typingId);
     const rowId = 'msg-' + Date.now();
     currentBubble = addStreamBubble(rowId);
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
 
-    for await (const chunk of stream) {
-      if (abortController.signal.aborted) break;
-      const delta = chunk.choices[0]?.delta?.content || '';
-      fullReply += delta;
-      currentBubble.innerHTML = fmt(fullReply) + '<span class="cursor-blink">▋</span>';
-      document.getElementById('msgs').scrollTop = 99999;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed === 'data: [DONE]') continue;
+        if (!trimmed.startsWith('data: ')) continue;
+        
+        try {
+          const json = JSON.parse(trimmed.slice(6));
+          const delta = json.choices?.[0]?.delta?.content || '';
+          if (json.choices?.[0]?.finish_reason === 'stop') break;
+          if (delta) {
+            fullReply += delta;
+            currentBubble.innerHTML = fmt(fullReply) + '<span class="cursor-blink">▋</span>';
+            document.getElementById('msgs').scrollTop = 99999;
+          }
+        } catch(e) {}
+      }
     }
 
     if (currentBubble) currentBubble.innerHTML = fmt(fullReply);
-    history.push({ role: 'assistant', content: fullReply });
+    conversationHistory.push({ role: 'user', content: text });
+    conversationHistory.push({ role: 'assistant', content: fullReply });
+
+    // Keep conversation manageable (last 20 messages)
+    if (conversationHistory.length > 40) {
+      conversationHistory = conversationHistory.slice(-40);
+    }
 
   } catch(e) {
     removeTyping(typingId);
-    if (!abortController.signal.aborted) {
-      addMsg('ai', '⚠️ Erreur lors de la génération : ' + e.message);
+    if (e.name === 'AbortError') {
+      if (fullReply) {
+        if (currentBubble) currentBubble.innerHTML = fmt(fullReply);
+        conversationHistory.push({ role: 'user', content: text });
+        conversationHistory.push({ role: 'assistant', content: fullReply });
+      }
+    } else {
+      addMsg('ai', '⚠️ Erreur : ' + e.message + '\n\nVérifiez votre clé API dans les paramètres ⚙');
     }
   }
 
@@ -617,12 +554,13 @@ window.stopGen = function() {
 };
 
 window.quick = function(text) {
-  if (!engine) { toast('⚠ Chargez un modèle d\'abord'); return; }
   document.getElementById('inp').value = text;
   window.sendMsg();
 };
 
-// ── DOM HELPERS ──
+// ══════════════════════════════════════════
+// DOM HELPERS
+// ══════════════════════════════════════════
 function hideWelcome() {
   const w = document.getElementById('welcome');
   if (w) w.remove();
@@ -634,11 +572,11 @@ function addMsg(role, text) {
   row.className = 'msg-row ' + (role === 'user' ? 'usr' : '');
   const avCls = role === 'ai' ? 'ai-av' : 'usr-av';
   const bblCls = role === 'ai' ? 'ai-bbl' : 'usr-bbl';
-  const emo = role === 'ai' ? '🤖' : '👤';
+  const emo = role === 'ai' ? '🧠' : '👤';
   row.innerHTML = `
     <div class="av ${avCls}">${emo}</div>
     <div class="msg-body">
-      <div class="msg-name">${role === 'ai' ? 'NexusAI' : 'Vous'}</div>
+      <div class="msg-name">${role === 'ai' ? 'DeepSeek' : 'Vous'}</div>
       <div class="bbl ${bblCls}">${fmt(text)}</div>
     </div>`;
   msgs.appendChild(row);
@@ -650,9 +588,9 @@ function addStreamBubble(id) {
   const row = document.createElement('div');
   row.className = 'msg-row'; row.id = id;
   row.innerHTML = `
-    <div class="av ai-av">🤖</div>
+    <div class="av ai-av">🧠</div>
     <div class="msg-body">
-      <div class="msg-name">NexusAI</div>
+      <div class="msg-name">DeepSeek</div>
       <div class="bbl ai-bbl" id="bbl-${id}"></div>
     </div>`;
   msgs.appendChild(row);
@@ -665,8 +603,8 @@ function addTyping() {
   const msgs = document.getElementById('msgs');
   const row = document.createElement('div');
   row.className = 'msg-row'; row.id = id;
-  row.innerHTML = `<div class="av ai-av">🤖</div>
-    <div class="msg-body"><div class="msg-name">NexusAI</div>
+  row.innerHTML = `<div class="av ai-av">🧠</div>
+    <div class="msg-body"><div class="msg-name">DeepSeek</div>
     <div class="bbl ai-bbl"><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div></div></div>`;
   msgs.appendChild(row);
   msgs.scrollTop = 99999;
@@ -679,9 +617,10 @@ function setStatus(state, txt) {
   document.getElementById('statusTxt').textContent = txt;
 }
 
-// ── MARKDOWN FORMAT ──
+// ══════════════════════════════════════════
+// MARKDOWN FORMATTER
+// ══════════════════════════════════════════
 function fmt(text) {
-  // code blocks
   text = text.replace(/```(\w+)?\n?([\s\S]*?)```/g, (_, lang, code) => {
     const l = (lang || 'code').toLowerCase();
     const esc = code.trim().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -737,7 +676,14 @@ document.head.appendChild(s);
 
 <script>
 function resize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,150)+'px';}
-function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();window.sendMsg&&window.sendMsg();}}
+function onKey(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();
+  if(window.sendMsg) window.sendMsg();}
+}
+// Close modal on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeSettings();
+});
 </script>
 </body>
 </html>
