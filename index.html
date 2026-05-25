@@ -35,7 +35,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
   width:260px;flex-shrink:0;background:var(--sd);
   border-right:1px solid var(--b1);
   display:flex;flex-direction:column;
-  padding:16px;gap:8px;
+  padding:16px;gap:8px;height:100vh;overflow:hidden;
 }
 .sidebar-brand{
   display:flex;align-items:center;gap:10px;padding:6px 4px 14px;
@@ -58,6 +58,24 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
 }
 .sb-item:hover{background:var(--s2);color:var(--tx);}
 .sb-item.act{background:var(--s3);color:var(--tx);}
+.sb-convs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin:2px 0 4px;min-height:0;}
+.sb-convs::-webkit-scrollbar{width:2px;}
+.sb-convs::-webkit-scrollbar-thumb{background:var(--b1);border-radius:2px;}
+.sb-conv{
+  display:flex;align-items:center;gap:6px;padding:6px 8px;
+  border-radius:6px;cursor:pointer;transition:all .12s;
+  font-size:12px;color:var(--tx2);position:relative;
+}
+.sb-conv:hover{background:var(--s2);color:var(--tx);}
+.sb-conv.act{background:var(--s3);color:var(--tx);}
+.sb-conv-t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;}
+.sb-conv-del{
+  width:16px;height:16px;border-radius:3px;border:none;background:none;
+  font-size:8px;color:var(--tx3);cursor:pointer;display:none;flex-shrink:0;
+  align-items:center;justify-content:center;transition:all .12s;
+}
+.sb-conv:hover .sb-conv-del,.sb-conv.act .sb-conv-del{display:flex;}
+.sb-conv-del:hover{background:rgba(255,95,160,0.15);color:var(--a3);}
 .sb-bottom{margin-top:auto;display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--b1);padding-top:10px;}
 .sb-bottom .sb-item{font-size:12px;}
 
@@ -163,7 +181,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
 /* INPUT */
 .input-zone{
   padding:12px 20px;padding-bottom:max(12px,env(safe-area-inset-bottom,0px));
-  flex-shrink:0;
+  flex-shrink:0;transition:bottom .15s;
 }
 .inp-wrap{
   display:flex;align-items:flex-end;gap:6px;
@@ -341,7 +359,8 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
       <div><div class="sb-name">Qwen AI</div><div class="sb-sub">Gratuit · Illimité</div></div>
     </div>
     <div class="sb-section">Conversations</div>
-    <div class="sb-item act" onclick="newChat()">💬 Nouvelle discussion</div>
+    <div class="sb-item" onclick="newChat()">💬 Nouvelle discussion</div>
+    <div class="sb-convs" id="convList"></div>
     <div class="sb-bottom">
       <div class="sb-item" onclick="openSettings()">⚙ Paramètres</div>
       <div class="sb-item" onclick="openAPISettings()">🔑 API</div>
@@ -633,7 +652,7 @@ async function voiceChatSend(text) {
     conversationHistory.push({ role: 'user', content: text });
     conversationHistory.push({ role: 'assistant', content: reply });
     if (conversationHistory.length > 40) conversationHistory = conversationHistory.slice(-40);
-    saveHistory(); saveMessages();
+    saveCurrentConv();
 
     const shortReply = reply.replace(/```[\s\S]*?```/g, '[code]').replace(/[#*•>\-\[\]]/g, '').replace(/\n+/g, ' ').substring(0, 100);
     setVoState('🔊', 'Qwen AI répond…', '', shortReply, 'speaking');
@@ -711,47 +730,129 @@ async function generateImage(prompt) {
   return imgWrap;
 }
 
-// HISTORY
-function saveHistory() {
-  try { localStorage.setItem('qh_hist', JSON.stringify(conversationHistory)); } catch(e) {}
+// CONVERSATION MANAGEMENT
+let conversations = [];
+let activeConvId = null;
+
+function genId() { return 'c' + Date.now() + Math.random().toString(36).slice(2,6); }
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function saveConvs() {
+  try { localStorage.setItem('qh_convs', JSON.stringify(conversations)); localStorage.setItem('qh_active', activeConvId || ''); } catch(e) {}
 }
-function loadHistory() {
+function loadConvs() {
   try {
-    const h = localStorage.getItem('qh_hist');
-    if (h) conversationHistory = JSON.parse(h);
-    const msgs = localStorage.getItem('qh_msgs');
-    if (msgs && conversationHistory.length) {
-      const rows = JSON.parse(msgs);
-      rows.forEach(r => addMsg(r.role, r.content));
+    const d = localStorage.getItem('qh_convs');
+    if (d) conversations = JSON.parse(d);
+    activeConvId = localStorage.getItem('qh_active') || null;
+  } catch(e) { conversations = []; }
+}
+
+function currentConv() { return conversations.find(c => c.id === activeConvId); }
+
+function renderSidebar() {
+  const list = document.getElementById('convList');
+  list.innerHTML = '';
+  conversations.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'sb-conv' + (c.id === activeConvId ? ' act' : '');
+    const title = c.title || 'Nouvelle conversation';
+    div.innerHTML = `<span class="sb-conv-t">${escHtml(title)}</span><button class="sb-conv-del" data-cid="${c.id}">✕</button>`;
+    div.querySelector('.sb-conv-del').onclick = (e) => { e.stopPropagation(); deleteConv(c.id); };
+    div.onclick = () => switchConv(c.id);
+    list.appendChild(div);
+  });
+}
+
+function showWelcome() {
+  const sec = document.getElementById('msgs');
+  const wel = document.createElement('div');
+  wel.className = 'welcome'; wel.id = 'welcome';
+  wel.innerHTML = `<h1>Let's get started.</h1><p>Développé par <strong>tom_visionai_pro</strong> — encore en chantier, mais déjà gratuit et illimité ✨<br>Propulsé par Qwen Flash via MuleRouter.</p><div class="q-suggest">${document.querySelector('.q-suggest')?.innerHTML || ''}</div>`;
+  sec.prepend(wel);
+}
+
+function saveCurrentConv() {
+  const conv = currentConv();
+  if (!conv) return;
+  conv.history = [...conversationHistory];
+  if (conv.history.length > 0 && (!conv.title || conv.title === 'Nouvelle conversation')) {
+    const first = conv.history.find(m => m.role === 'user');
+    if (first) conv.title = first.content.substring(0, 35) + (first.content.length > 35 ? '…' : '');
+  }
+  saveConvs();
+  renderSidebar();
+}
+
+function switchConv(id) {
+  saveCurrentConv();
+  activeConvId = id;
+  saveConvs();
+  document.getElementById('msgs').querySelectorAll('.msg-row').forEach(el => el.remove());
+  const w = document.getElementById('welcome');
+  if (w) w.remove();
+  const conv = currentConv();
+  conversationHistory = conv ? [...conv.history] : [];
+  if (conversationHistory.length > 0) {
+    conversationHistory.forEach(m => addMsg(m.role, m.content));
+  } else {
+    showWelcome();
+  }
+  renderSidebar();
+}
+
+window.deleteConv = function(id) {
+  if (conversations.length <= 1) { toast('⚠️ Garde au moins une conversation'); return; }
+  const idx = conversations.findIndex(c => c.id === id);
+  if (idx === -1) return;
+  conversations.splice(idx, 1);
+  if (activeConvId === id) {
+    const next = conversations[Math.min(idx, conversations.length - 1)];
+    activeConvId = next.id;
+    conversationHistory = [...next.history];
+    document.getElementById('msgs').querySelectorAll('.msg-row').forEach(el => el.remove());
+    const w = document.getElementById('welcome');
+    if (w) w.remove();
+    if (conversationHistory.length > 0) {
+      conversationHistory.forEach(m => addMsg(m.role, m.content));
+    } else {
+      showWelcome();
     }
-  } catch(e) {}
-}
-function saveMessages() {
-  try {
-    const rows = [];
-    document.querySelectorAll('.msg-row').forEach(el => {
-      const role = el.classList.contains('usr') ? 'user' : 'ai';
-      const content = el.querySelector('.bbl')?.innerText || '';
-      if (content) rows.push({ role, content });
-    });
-    localStorage.setItem('qh_msgs', JSON.stringify(rows));
-  } catch(e) {}
-}
+  }
+  saveConvs();
+  renderSidebar();
+  toast('🗑 Conversation supprimée');
+};
+
 window.newChat = function() {
+  saveCurrentConv();
+  const id = genId();
+  conversations.push({ id, title: 'Nouvelle conversation', history: [] });
+  activeConvId = id;
   conversationHistory = [];
   document.getElementById('msgs').querySelectorAll('.msg-row').forEach(el => el.remove());
-  localStorage.removeItem('qh_hist');
-  localStorage.removeItem('qh_msgs');
   const w = document.getElementById('welcome');
-  if (!w) {
-    const sec = document.getElementById('msgs');
-    const wel = document.createElement('div');
-    wel.className = 'welcome'; wel.id = 'welcome';
-    wel.innerHTML = `<h1>Let's get started.</h1><p>Développé par <strong>tom_visionai_pro</strong> — encore en chantier, mais déjà gratuit et illimité ✨<br>Propulsé par Qwen Flash via MuleRouter.</p><div class="q-suggest">${document.querySelector('.q-suggest')?.innerHTML || ''}</div>`;
-    sec.prepend(wel);
-  }
-  toast('🗑 Nouvelle conversation');
+  if (w) w.remove();
+  showWelcome();
+  saveConvs();
+  renderSidebar();
+  toast('💬 Nouvelle conversation');
 };
+
+function initConvs() {
+  loadConvs();
+  if (!conversations.length) {
+    const id = genId();
+    conversations.push({ id, title: 'Nouvelle conversation', history: [] });
+    activeConvId = id;
+  }
+  const conv = currentConv();
+  if (conv && conv.history.length) {
+    conversationHistory = [...conv.history];
+    conversationHistory.forEach(m => addMsg(m.role, m.content));
+  }
+  renderSidebar();
+}
 
 // SETTINGS
 window.openSettings = function() {
@@ -827,7 +928,7 @@ window.sendMsg = async function() {
     }
     generating = false;
     setStatus('ready', 'Prêt');
-    saveHistory(); saveMessages();
+    saveCurrentConv();
     return;
   }
 
@@ -917,7 +1018,7 @@ window.sendMsg = async function() {
   document.getElementById('btnSend').disabled = false;
   document.getElementById('btnStop').classList.remove('vis');
   setStatus('ready', 'Prêt');
-  saveHistory(); saveMessages();
+  saveCurrentConv();
 };
 
 window.stopGen = function() {
@@ -1023,7 +1124,24 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') { closeSettings(); closeAPISettings(); }
 });
 
-loadHistory();
+initConvs();
+
+// Mobile keyboard handling
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    const iz = document.querySelector('.input-zone');
+    const diff = window.innerHeight - visualViewport.height;
+    if (diff > 100) {
+      iz.style.position = 'fixed';
+      iz.style.bottom = '0'; iz.style.left = '0'; iz.style.right = '0';
+      iz.style.zIndex = '50'; iz.style.background = 'var(--bg)';
+    } else {
+      iz.style.position = ''; iz.style.bottom = '';
+      iz.style.left = ''; iz.style.right = '';
+      iz.style.zIndex = ''; iz.style.background = '';
+    }
+  });
+}
 
 document.addEventListener('contextmenu', function(e) {
   if (e.target.closest('.modal-overlay')) { e.preventDefault(); }
