@@ -203,6 +203,37 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 }
 .voice-btn:hover{background:var(--s2);border-color:var(--b2);color:var(--tx);}
 .voice-btn.on{background:rgba(0,212,170,0.1);border-color:rgba(0,212,170,0.3);color:var(--a2);}
+
+/* VOICE CHAT OVERLAY */
+.voice-overlay{
+  position:fixed;inset:0;z-index:100;display:none;
+  flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(7,7,14,0.92);backdrop-filter:blur(20px);
+  animation:fadeUp .3s ease both;
+}
+.voice-overlay.show{display:flex;}
+.vo-status{font-size:18px;font-weight:600;margin-top:20px;transition:all .3s;}
+.vo-sub{font-size:13px;color:var(--tx2);margin-top:8px;}
+.vo-wave{display:flex;gap:4px;align-items:center;height:50px;margin:20px 0;}
+.vo-wave span{
+  width:4px;background:var(--a1);border-radius:2px;
+  animation:wave 0.8s ease-in-out infinite;
+}
+.vo-wave span:nth-child(1){height:20px;animation-delay:0s;}
+.vo-wave span:nth-child(2){height:35px;animation-delay:0.1s;}
+.vo-wave span:nth-child(3){height:50px;animation-delay:0.2s;}
+.vo-wave span:nth-child(4){height:35px;animation-delay:0.3s;}
+.vo-wave span:nth-child(5){height:20px;animation-delay:0.4s;}
+@keyframes wave{0%,100%{transform:scaleY(0.5);}50%{transform:scaleY(1);}}
+.vo-stop{
+  margin-top:30px;padding:14px 28px;border-radius:100px;
+  border:1px solid rgba(255,95,160,0.3);background:rgba(255,95,160,0.1);
+  color:var(--a3);font-size:14px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;touch-action:manipulation;
+}
+.vo-stop:hover{background:rgba(255,95,160,0.2);}
+.vo-icon{font-size:64px;transition:all .3s;}
+.vo-icon.listening{animation:vo-pulse 1.2s ease-in-out infinite;}
+@keyframes vo-pulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 10px rgba(79,142,255,0.3));}50%{transform:scale(1.08);filter:drop-shadow(0 0 30px rgba(79,142,255,0.6));}}
 .btn-send:hover{transform:scale(1.06);box-shadow:0 0 28px rgba(79,142,255,0.5);}
 .btn-send:active{transform:scale(.94);}
 .btn-send:disabled{opacity:.38;cursor:not-allowed;transform:none;box-shadow:none;}
@@ -338,11 +369,11 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
 
   <!-- MODEL BAR -->
   <div class="model-bar" id="modelBar">
-    <button class="mb-btn sel" data-model="qwen3.5-plus" data-temp="0.7" onclick="selModel(this)">🧠 Qwen 3.5 Plus</button>
-    <button class="mb-btn" data-model="qwen3-max" data-temp="0.5" onclick="selModel(this)">🔍 Qwen3 Max</button>
-    <button class="mb-btn" data-model="qwen3.5-plus" data-temp="1.0" onclick="selModel(this)">🎨 Créatif (3.5 Plus)</button>
-    <button class="mb-btn" data-model="qwen-plus" data-temp="0.7" onclick="selModel(this)">⚡ Qwen Plus (rapide)</button>
-    <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">🔇 Vocal</button>
+    <button class="mb-btn sel" data-model="qwen-flash" data-temp="0.7" onclick="selModel(this)">⚡ Flash (rapide)</button>
+    <button class="mb-btn" data-model="qwen-plus" data-temp="0.7" onclick="selModel(this)">🚀 Qwen Plus</button>
+    <button class="mb-btn" data-model="qwen3.5-plus" data-temp="0.7" onclick="selModel(this)">🧠 3.5 Plus (précis)</button>
+    <button class="mb-btn" data-model="qwen3-max" data-temp="0.5" onclick="selModel(this)">🔍 3 Max (raisonnement)</button>
+    <button class="voice-btn" id="voiceBtn" onclick="startVoiceChat()" style="background:rgba(79,142,255,0.12);border-color:rgba(79,142,255,0.3);color:var(--a1)">🎤 Vocal</button>
   </div>
 
   <!-- MESSAGES -->
@@ -350,7 +381,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
     <div class="welcome" id="welcome">
       <div class="welcome-icon">🧠</div>
       <h1>Qwen AI</h1>
-      <p>Assistant IA créé par <strong>tom_visionai_pro</strong> — gratuit et illimité, aucune configuration requise. Propulsé par Qwen 3.5 Plus via MuleRouter.</p>
+      <p>Assistant IA créé par <strong>tom_visionai_pro</strong> — gratuit et illimité, aucune configuration requise. Mode vocal 🎤 disponible.</p>
       <div class="quick-wrap">
         <div class="qcard" onclick="quick('Explique-moi l\'intelligence artificielle simplement')">
           <div class="qcard-ico">🧠</div>
@@ -383,11 +414,18 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   <div class="input-zone">
     <div class="inp-wrap">
       <textarea id="inp" rows="1" placeholder="Posez votre question…" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
-      <button class="btn-mic" id="btnMic" onclick="toggleMic()" title="Dictée vocale">🎤</button>
       <button class="btn-send" id="btnSend" onclick="sendMsg()">➤</button>
     </div>
-    <div class="inp-hint" id="inpHint">🎤 Dicter · Enter envoyer · 🔊 Vocal activable</div>
+    <div class="inp-hint" id="inpHint">Enter pour envoyer · 🎤 Vocal pour parler</div>
   </div>
+</div>
+
+<div class="voice-overlay" id="voiceOverlay">
+  <div class="vo-icon" id="voIcon">🎤</div>
+  <div class="vo-wave" id="voWave"><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="vo-status" id="voStatus">Écoute…</div>
+  <div class="vo-sub" id="voSub">Parlez librement, je vous écoute</div>
+  <button class="vo-stop" onclick="stopVoiceChat()">⏹ Arrêter</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -397,7 +435,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   <div class="modal-box">
     <div class="modal-title">🔒 Paramètres API</div>
     <div class="modal-desc">Une <strong>clé intégrée</strong> est active automatiquement — gratuit et illimité via MuleRouter. Merci de ne pas la partager ou la copier.</div>
-    <div class="modal-warn">🔓 Propulsé par <strong>Qwen 3.5 Plus</strong> via l'API MuleRouter. Modèles disponibles : Qwen3 Max (raisonnement), Qwen Plus (rapide).</div>
+    <div class="modal-warn">🔓 Propulsé par <strong>Qwen Flash</strong> via MuleRouter. Mode vocal 🎤 continu comme ChatGPT.</div>
     
     <div id="defaultKeyStatus" style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2);font-size:13px;color:var(--a2);margin-bottom:14px">
       <span style="font-size:16px">🔒</span>
@@ -433,7 +471,7 @@ const API_URL = "https://api.mulerouter.ai/vendors/openai/v1/chat/completions";
 // ══════════════════════════════════════════
 let savedKey = localStorage.getItem('ds_api_key');
 let apiKey = savedKey && savedKey.startsWith('sk-mr-') ? savedKey : DEFAULT_API_KEY;
-let selectedModel = "qwen3.5-plus";
+let selectedModel = "qwen-flash";
 let temperature = 0.7;
 let generating = false;
 let abortController = null;
@@ -466,122 +504,156 @@ window.selModel = function(btn) {
 };
 
 // ══════════════════════════════════════════
-// VOICE (SPEECH RECOGNITION + TTS)
+// VOICE CHAT (comme ChatGPT — continu)
 // ══════════════════════════════════════════
-let voiceEnabled = false;
-let isRecording = false;
-let recognition = null;
-
 const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+let voiceChatActive = false;
+let voiceRecognition = null;
+let voiceRestartTimer = null;
 
-window.toggleVoice = function() {
-  voiceEnabled = !voiceEnabled;
-  const btn = document.getElementById('voiceBtn');
-  btn.innerHTML = voiceEnabled ? '🔊 Vocal' : '🔇 Vocal';
-  btn.classList.toggle('on', voiceEnabled);
-  toast(voiceEnabled ? '✓ Réponse vocale activée' : '✓ Réponse vocale désactivée');
+function setVoState(icon, status, sub) {
+  document.getElementById('voIcon').textContent = icon;
+  document.getElementById('voStatus').textContent = status;
+  document.getElementById('voSub').textContent = sub;
+  document.getElementById('voIcon').className = 'vo-icon' + (icon === '🎤' ? ' listening' : '');
+}
+
+window.startVoiceChat = function() {
+  if (!SpeechRec) { toast('⚠️ Vocal non supporté sur ce navigateur'); return; }
+  voiceChatActive = true;
+  document.getElementById('voiceOverlay').classList.add('show');
+  startVoiceListen();
 };
 
-window.toggleMic = function() {
-  if (!SpeechRec) {
-    toast('⚠️ Dictée vocale non supportée sur ce navigateur');
-    return;
-  }
-  if (isRecording) {
-    stopRecording();
-  } else {
-    startRecording();
-  }
-};
-
-function startRecording() {
-  if (generating) return;
+function startVoiceListen() {
+  if (!voiceChatActive) return;
+  setVoState('🎤', 'Je vous écoute…', 'Parlez librement');
   try {
-    recognition = new SpeechRec();
-    recognition.lang = 'fr-FR';
-    recognition.continuous = false;
-    recognition.interimResults = true;
+    voiceRecognition = new SpeechRec();
+    voiceRecognition.lang = 'fr-FR';
+    voiceRecognition.continuous = false;
+    voiceRecognition.interimResults = true;
 
-    recognition.onstart = () => {
-      isRecording = true;
-      document.getElementById('btnMic').classList.add('rec');
-      document.getElementById('btnMic').textContent = '⏹';
-      toast('🎤 Parlez maintenant…');
-    };
-
-    recognition.onresult = (e) => {
-      let interim = '';
+    voiceRecognition.onresult = (e) => {
       let final = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
-        if (e.results[i].isFinal) {
-          final += e.results[i][0].transcript;
-        } else {
-          interim += e.results[i][0].transcript;
-        }
+        if (e.results[i].isFinal) final += e.results[i][0].transcript;
       }
       if (final) {
-        document.getElementById('inp').value = final;
-        resize(document.getElementById('inp'));
-        // Auto-send after short delay
-        setTimeout(() => {
-          if (document.getElementById('inp').value.trim()) {
-            window.sendMsg();
-          }
-        }, 300);
-      } else if (interim) {
-        document.getElementById('inp').value = interim;
-        resize(document.getElementById('inp'));
+        setVoState('🤔', 'Je réfléchis…', '');
+        voiceChatSend(final);
       }
     };
 
-    recognition.onerror = (e) => {
-      toast('⚠️ Erreur microphone: ' + e.error);
-      stopRecording();
+    voiceRecognition.onerror = (e) => {
+      if (e.error === 'no-speech' || e.error === 'aborted') {
+        if (voiceChatActive) { voiceRestartTimer = setTimeout(startVoiceListen, 300); }
+        return;
+      }
+      toast('⚠️ Erreur micro: ' + e.error);
+      stopVoiceChat();
     };
 
-    recognition.onend = () => {
-      stopRecording();
+    voiceRecognition.onend = () => {
+      if (voiceChatActive && !generating) {
+        voiceRestartTimer = setTimeout(startVoiceListen, 200);
+      }
     };
 
-    recognition.start();
-  } catch (e) {
+    voiceRecognition.start();
+  } catch(e) {
     toast('⚠️ Erreur: ' + e.message);
+    stopVoiceChat();
   }
 }
 
-function stopRecording() {
-  if (recognition) {
-    try { recognition.stop(); } catch(e) {}
-    recognition = null;
+async function voiceChatSend(text) {
+  voiceChatActive = true;
+  try {
+    // Send to API
+    const messages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...conversationHistory,
+      { role: 'user', content: text }
+    ];
+
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey },
+      body: JSON.stringify({ model: selectedModel, messages, stream: false, temperature, max_tokens: 1024 }),
+      signal: abortController?.signal
+    });
+
+    if (!response.ok) {
+      const errData = await response.text();
+      let errMsg = `Erreur ${response.status}`;
+      try { const j = JSON.parse(errData); errMsg = j.error?.message || errMsg; } catch(e) {}
+      throw new Error(errMsg);
+    }
+
+    const json = await response.json();
+    const reply = json.choices?.[0]?.message?.content || '';
+    if (!reply) throw new Error('Réponse vide');
+
+    // Add to chat
+    hideWelcome();
+    addMsg('user', text);
+    addMsg('ai', reply);
+    conversationHistory.push({ role: 'user', content: text });
+    conversationHistory.push({ role: 'assistant', content: reply });
+    if (conversationHistory.length > 40) conversationHistory = conversationHistory.slice(-40);
+
+    // Speak the response
+    setVoState('🔊', 'Qwen AI répond…', '');
+    await speakText(reply);
+
+    // Listen again
+    if (voiceChatActive) startVoiceListen();
+    else stopVoiceChat();
+
+  } catch(e) {
+    addMsg('ai', '⚠️ Erreur: ' + e.message);
+    if (voiceChatActive) startVoiceListen();
   }
-  isRecording = false;
-  const mic = document.getElementById('btnMic');
-  mic.classList.remove('rec');
-  mic.textContent = '🎤';
 }
 
 function speakText(text) {
-  if (!voiceEnabled) return;
-  if (!window.speechSynthesis) return;
-  // Cancel any ongoing speech
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'fr-FR';
-  utterance.rate = 1.0;
-  utterance.pitch = 1.0;
-  // Try to find a French voice
-  const voices = window.speechSynthesis.getVoices();
-  const frVoice = voices.find(v => v.lang.startsWith('fr'));
-  if (frVoice) utterance.voice = frVoice;
-  window.speechSynthesis.speak(utterance);
+  return new Promise((resolve) => {
+    if (!window.speechSynthesis) { resolve(); return; }
+    window.speechSynthesis.cancel();
+    const clean = text.replace(/```[\s\S]*?```/g, '')
+                      .replace(/`([^`]+)`/g, '$1')
+                      .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
+                      .replace(/[#*•>\-\[\]]/g, '')
+                      .replace(/\n{2,}/g, '. ')
+                      .replace(/\n/g, ' ')
+                      .trim();
+    if (!clean) { resolve(); return; }
+    const utterance = new SpeechSynthesisUtterance(clean);
+    utterance.lang = 'fr-FR';
+    utterance.rate = 1.0;
+    utterance.onend = resolve;
+    utterance.onerror = resolve;
+    const voices = window.speechSynthesis.getVoices();
+    const fr = voices.find(v => v.lang.startsWith('fr'));
+    if (fr) utterance.voice = fr;
+    window.speechSynthesis.speak(utterance);
+  });
 }
+
+window.stopVoiceChat = function() {
+  voiceChatActive = false;
+  document.getElementById('voiceOverlay').classList.remove('show');
+  if (voiceRecognition) { try { voiceRecognition.stop(); } catch(e) {} voiceRecognition = null; }
+  if (voiceRestartTimer) { clearTimeout(voiceRestartTimer); voiceRestartTimer = null; }
+  window.speechSynthesis?.cancel();
+  setVoState('🎤', 'Arrêté', '');
+};
 
 // Pre-load voices
 if (window.speechSynthesis) {
   window.speechSynthesis.getVoices();
-  window.speechSynthesis.onvoiceschanged = () => {
-    window.speechSynthesis.getVoices();
-  };
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 }
 
 // ══════════════════════════════════════════
@@ -727,7 +799,6 @@ window.sendMsg = async function() {
     }
 
     if (currentBubble) currentBubble.innerHTML = fmt(fullReply);
-    speakText(fullReply);
     conversationHistory.push({ role: 'user', content: text });
     conversationHistory.push({ role: 'assistant', content: fullReply });
 
