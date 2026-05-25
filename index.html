@@ -164,7 +164,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   flex-shrink:0;padding-bottom:max(14px,env(safe-area-inset-bottom,0px));
 }
 .inp-wrap{
-  display:flex;align-items:flex-end;gap:8px;
+  display:flex;align-items:flex-end;gap:6px;
   background:var(--s2);border:1px solid var(--b2);
   border-radius:18px;padding:10px 10px 10px 18px;
   transition:border-color .2s,box-shadow .2s;
@@ -182,8 +182,27 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   background:linear-gradient(135deg,var(--a1),rgba(0,212,170,0.8));
   display:flex;align-items:center;justify-content:center;
   font-size:16px;color:#fff;
-  box-shadow:0 0 18px rgba(79,142,255,0.35);transition:all .2s;
+  box-shadow:0 0 18px rgba(79,142,255,0.35);transition:all .2s;touch-action:manipulation;
 }
+.btn-mic{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;border:none;cursor:pointer;
+  background:var(--s2);border:1px solid var(--b2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;color:var(--tx2);transition:all .22s;touch-action:manipulation;
+}
+.btn-mic:hover{background:var(--s3);border-color:var(--b3);color:var(--tx);}
+.btn-mic.rec{
+  background:rgba(255,95,160,0.15);border-color:var(--a3);color:var(--a3);
+  box-shadow:0 0 16px rgba(255,95,160,0.3);animation:mic-pulse .8s ease-in-out infinite;
+}
+@keyframes mic-pulse{0%,100%{box-shadow:0 0 10px rgba(255,95,160,0.2);}50%{box-shadow:0 0 22px rgba(255,95,160,0.5);}}
+.voice-btn{
+  padding:4px 10px;border-radius:100px;border:1px solid var(--b1);background:var(--s1);
+  font-size:11px;font-weight:500;color:var(--tx2);cursor:pointer;transition:all .22s;
+  white-space:nowrap;font-family:'Outfit',sans-serif;touch-action:manipulation;display:flex;align-items:center;gap:4px;
+}
+.voice-btn:hover{background:var(--s2);border-color:var(--b2);color:var(--tx);}
+.voice-btn.on{background:rgba(0,212,170,0.1);border-color:rgba(0,212,170,0.3);color:var(--a2);}
 .btn-send:hover{transform:scale(1.06);box-shadow:0 0 28px rgba(79,142,255,0.5);}
 .btn-send:active{transform:scale(.94);}
 .btn-send:disabled{opacity:.38;cursor:not-allowed;transform:none;box-shadow:none;}
@@ -259,12 +278,12 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   .msgs{padding:14px;}
   .model-bar{padding:6px 14px;flex-wrap:nowrap;}
   .model-bar{justify-content:flex-start;}
-  .modal-box{padding:20px;}
-  .modal-box{margin:10px;}
+  .modal-box{padding:20px;margin:10px;}
   .brand-tag{display:none;}
   .bbl{font-size:14px;padding:11px 14px;}
   .cblock pre{font-size:11px;padding:10px;}
   .btn-send{width:42px;height:42px;font-size:18px;}
+  .btn-mic{width:38px;height:38px;font-size:16px;}
   .welcome-icon{font-size:44px;}
 }
 @media(max-width:480px){
@@ -323,6 +342,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
     <button class="mb-btn" data-model="qwen3-max" data-temp="0.5" onclick="selModel(this)">🔍 Qwen3 Max</button>
     <button class="mb-btn" data-model="qwen3.5-plus" data-temp="1.0" onclick="selModel(this)">🎨 Créatif (3.5 Plus)</button>
     <button class="mb-btn" data-model="qwen-plus" data-temp="0.7" onclick="selModel(this)">⚡ Qwen Plus (rapide)</button>
+    <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">🔇 Vocal</button>
   </div>
 
   <!-- MESSAGES -->
@@ -363,9 +383,10 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   <div class="input-zone">
     <div class="inp-wrap">
       <textarea id="inp" rows="1" placeholder="Posez votre question…" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
+      <button class="btn-mic" id="btnMic" onclick="toggleMic()" title="Dictée vocale">🎤</button>
       <button class="btn-send" id="btnSend" onclick="sendMsg()">➤</button>
     </div>
-    <div class="inp-hint" id="inpHint">Shift+Enter pour nouvelle ligne · Enter pour envoyer</div>
+    <div class="inp-hint" id="inpHint">🎤 Dicter · Enter envoyer · 🔊 Vocal activable</div>
   </div>
 </div>
 
@@ -443,6 +464,125 @@ window.selModel = function(btn) {
   temperature = parseFloat(btn.dataset.temp) || 0.7;
   toast('✓ Mode sélectionné : ' + btn.textContent.trim());
 };
+
+// ══════════════════════════════════════════
+// VOICE (SPEECH RECOGNITION + TTS)
+// ══════════════════════════════════════════
+let voiceEnabled = false;
+let isRecording = false;
+let recognition = null;
+
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+window.toggleVoice = function() {
+  voiceEnabled = !voiceEnabled;
+  const btn = document.getElementById('voiceBtn');
+  btn.innerHTML = voiceEnabled ? '🔊 Vocal' : '🔇 Vocal';
+  btn.classList.toggle('on', voiceEnabled);
+  toast(voiceEnabled ? '✓ Réponse vocale activée' : '✓ Réponse vocale désactivée');
+};
+
+window.toggleMic = function() {
+  if (!SpeechRec) {
+    toast('⚠️ Dictée vocale non supportée sur ce navigateur');
+    return;
+  }
+  if (isRecording) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+};
+
+function startRecording() {
+  if (generating) return;
+  try {
+    recognition = new SpeechRec();
+    recognition.lang = 'fr-FR';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+
+    recognition.onstart = () => {
+      isRecording = true;
+      document.getElementById('btnMic').classList.add('rec');
+      document.getElementById('btnMic').textContent = '⏹';
+      toast('🎤 Parlez maintenant…');
+    };
+
+    recognition.onresult = (e) => {
+      let interim = '';
+      let final = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) {
+          final += e.results[i][0].transcript;
+        } else {
+          interim += e.results[i][0].transcript;
+        }
+      }
+      if (final) {
+        document.getElementById('inp').value = final;
+        resize(document.getElementById('inp'));
+        // Auto-send after short delay
+        setTimeout(() => {
+          if (document.getElementById('inp').value.trim()) {
+            window.sendMsg();
+          }
+        }, 300);
+      } else if (interim) {
+        document.getElementById('inp').value = interim;
+        resize(document.getElementById('inp'));
+      }
+    };
+
+    recognition.onerror = (e) => {
+      toast('⚠️ Erreur microphone: ' + e.error);
+      stopRecording();
+    };
+
+    recognition.onend = () => {
+      stopRecording();
+    };
+
+    recognition.start();
+  } catch (e) {
+    toast('⚠️ Erreur: ' + e.message);
+  }
+}
+
+function stopRecording() {
+  if (recognition) {
+    try { recognition.stop(); } catch(e) {}
+    recognition = null;
+  }
+  isRecording = false;
+  const mic = document.getElementById('btnMic');
+  mic.classList.remove('rec');
+  mic.textContent = '🎤';
+}
+
+function speakText(text) {
+  if (!voiceEnabled) return;
+  if (!window.speechSynthesis) return;
+  // Cancel any ongoing speech
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'fr-FR';
+  utterance.rate = 1.0;
+  utterance.pitch = 1.0;
+  // Try to find a French voice
+  const voices = window.speechSynthesis.getVoices();
+  const frVoice = voices.find(v => v.lang.startsWith('fr'));
+  if (frVoice) utterance.voice = frVoice;
+  window.speechSynthesis.speak(utterance);
+}
+
+// Pre-load voices
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => {
+    window.speechSynthesis.getVoices();
+  };
+}
 
 // ══════════════════════════════════════════
 // SETTINGS
@@ -587,6 +727,7 @@ window.sendMsg = async function() {
     }
 
     if (currentBubble) currentBubble.innerHTML = fmt(fullReply);
+    speakText(fullReply);
     conversationHistory.push({ role: 'user', content: text });
     conversationHistory.push({ role: 'assistant', content: fullReply });
 
