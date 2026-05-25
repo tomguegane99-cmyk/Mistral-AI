@@ -380,7 +380,8 @@ const API_URL = "https://api.mulerouter.ai/vendors/openai/v1/chat/completions";
 // ══════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════
-let apiKey = localStorage.getItem('ds_api_key') || DEFAULT_API_KEY;
+let savedKey = localStorage.getItem('ds_api_key');
+let apiKey = savedKey && savedKey.startsWith('sk-mr-') ? savedKey : DEFAULT_API_KEY;
 let selectedModel = "qwen3.5-plus";
 let temperature = 0.7;
 let generating = false;
