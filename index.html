@@ -111,17 +111,19 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
 }
 .welcome h1{font-size:26px;font-weight:600;letter-spacing:-.5px;color:var(--tx);}
 .welcome p{font-size:13px;color:var(--tx2);max-width:400px;line-height:1.6;}
-.img-suggest{
-  display:flex;gap:12px;margin-top:18px;flex-wrap:wrap;justify-content:center;
+.q-suggest{
+  display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;justify-content:center;
 }
-.img-card{
-  width:180px;border-radius:12px;overflow:hidden;cursor:pointer;
+.q-card{
+  width:160px;border-radius:12px;cursor:pointer;
   border:1px solid var(--b1);background:var(--s1);
-  transition:all .2s;position:relative;
+  transition:all .2s;position:relative;padding:18px 12px 14px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
 }
-.img-card:hover{border-color:var(--b3);transform:translateY(-2px);}
-.img-card img{width:100%;height:100px;object-fit:cover;display:block;background:linear-gradient(135deg,var(--a1),var(--a2));}
-.img-card-label{padding:8px 10px;font-size:12px;font-weight:500;color:var(--tx2);text-align:center;}
+.q-card:hover{border-color:var(--b3);transform:translateY(-2px);background:var(--s2);}
+.q-card-ico{font-size:28px;}
+.q-card-t{font-size:13px;font-weight:600;color:var(--tx);}
+.q-card-d{font-size:10.5px;color:var(--tx2);text-align:center;line-height:1.4;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
 /* MESSAGE BUBBLES */
@@ -289,8 +291,10 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
   .msg-body{max-width:88%;}
   .bbl{font-size:13.5px;padding:9px 12px;}
   .welcome h1{font-size:22px;}
-  .img-card{width:150px;}
-  .img-card img{height:80px;}
+  .q-card{width:140px;padding:14px 10px 12px;}
+  .q-card-ico{font-size:22px;}
+  .q-card-t{font-size:12px;}
+  .q-card-d{font-size:9.5px;}
   .tb-tools{gap:4px;}
   .tb-btn{width:28px;height:28px;font-size:12px;}
   .tb-voice{font-size:10px;padding:3px 8px;}
@@ -310,10 +314,11 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
   .usr-bbl{border-radius:12px 3px 12px 12px;}
   .welcome h1{font-size:19px;}
   .welcome p{font-size:12px;}
-  .img-card{width:130px;}
-  .img-card img{height:70px;}
-  .img-card-label{font-size:11px;padding:6px 8px;}
-  .img-suggest{gap:8px;margin-top:12px;}
+  .q-card{width:120px;padding:12px 8px 10px;}
+  .q-card-ico{font-size:20px;}
+  .q-card-t{font-size:11px;}
+  .q-card-d{font-size:9px;}
+  .q-suggest{gap:8px;margin-top:12px;}
   .tb-model{font-size:12px;padding:4px 8px;}
   .tb-model-sel{font-size:12px;}
   .tb-btn{width:26px;height:26px;font-size:11px;}
@@ -339,7 +344,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
     <div class="sb-item act" onclick="newChat()">💬 Nouvelle discussion</div>
     <div class="sb-bottom">
       <div class="sb-item" onclick="openSettings()">⚙ Paramètres</div>
-      <div class="sb-item" onclick="openSettings()">🔑 API Key</div>
+      <div class="sb-item" onclick="openAPISettings()">🔑 API</div>
     </div>
   </aside>
 
@@ -370,18 +375,21 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
       <div class="welcome" id="welcome">
         <h1>Let's get started.</h1>
         <p>Développé par <strong>tom_visionai_pro</strong> — encore en chantier, mais déjà gratuit et illimité ✨<br>Propulsé par Qwen Flash via MuleRouter.</p>
-        <div class="img-suggest">
-            <div class="img-card" onclick="quick('Génère une image de paysage futuriste cyberpunk avec des néons violets et bleus')">
-            <img src="https://image.pollinations.ai/prompt/futuristic%20cyberpunk%20cityscape%20with%20purple%20and%20blue%20neon%20lights%20flying%20cars?width=360&height=200" alt="Cyberpunk" onerror="this.style.display='none';this.nextElementSibling.style.background='linear-gradient(135deg,#7c3aed,#a855f7)'">
-            <div class="img-card-label">Cyberpunk</div>
+        <div class="q-suggest">
+          <div class="q-card" onclick="quick('Écris-moi un composant React avec des hooks')">
+            <div class="q-card-ico">💻</div>
+            <div class="q-card-t">Code</div>
+            <div class="q-card-d">React, JS, Python, HTML…</div>
           </div>
-          <div class="img-card" onclick="quick('Génère une image de montagne enneigée au coucher du soleil')">
-            <img src="https://image.pollinations.ai/prompt/snowy%20mountain%20peaks%20at%20sunset%20dramatic%20sky%20beautiful%20landscape?width=360&height=200" alt="Montagne" onerror="this.style.display='none';this.nextElementSibling.style.background='linear-gradient(135deg,#2563eb,#38bdf8)'">
-            <div class="img-card-label">Montagne</div>
+          <div class="q-card" onclick="quick('Donne-moi 5 idées de startup innovantes')">
+            <div class="q-card-ico">🚀</div>
+            <div class="q-card-t">Idées créatives</div>
+            <div class="q-card-d">Business, projets, innovations</div>
           </div>
-          <div class="img-card" onclick="quick('Génère une image de chat mignon avec des lunettes de soleil')">
-            <img src="https://image.pollinations.ai/prompt/cute%20cat%20wearing%20sunglasses%20cartoon%20style%20playful?width=360&height=200" alt="Chat" onerror="this.style.display='none';this.nextElementSibling.style.background='linear-gradient(135deg,#f59e0b,#ef4444)'">
-            <div class="img-card-label">Chat mignon</div>
+          <div class="q-card" onclick="quick('Résous ce problème pas à pas: Si 3x + 7 = 22, que vaut x ?')">
+            <div class="q-card-ico">🔢</div>
+            <div class="q-card-t">Raisonnement</div>
+            <div class="q-card-d">Maths, logique, réflexion</div>
           </div>
         </div>
       </div>
@@ -413,23 +421,49 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
 
 <div class="toast" id="toast"></div>
 
-<!-- SETTINGS -->
+<!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settingsModal" oncontextmenu="return false">
   <div class="modal-box">
-    <div class="modal-title">🔒 Paramètres</div>
+    <div class="modal-title">⚙ Paramètres</div>
     <div class="modal-desc">Développé par <strong>tom_visionai_pro</strong> — chantier en cours, améliorations à venir.</div>
-    <div class="modal-warn">🔓 Propulsé par <strong>Qwen Flash</strong> via MuleRouter (API intégrée, gratuit et illimité).<br><br>💡 <strong>API</strong> : ce site utilise l'API MuleRouter (compatible OpenAI) avec une clé intégrée. Aucune configuration nécessaire. Vous pouvez ajouter votre propre clé si souhaité.</div>
-    <div id="defaultKeyStatus" style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;background:rgba(0,212,170,0.07);border:1px solid rgba(0,212,170,0.18);font-size:12px;color:var(--a2);margin-bottom:12px">
+    <div class="modal-warn">🔓 Propulsé par <strong>Qwen Flash</strong> via MuleRouter — gratuit et illimité.</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;background:rgba(79,142,255,0.06);border:1px solid rgba(79,142,255,0.15);font-size:12px;color:var(--a1)">
+        <span>🤖</span> Modèle par défaut : <strong>Qwen Flash</strong>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;background:rgba(0,212,170,0.06);border:1px solid rgba(0,212,170,0.15);font-size:12px;color:var(--a2)">
+        <span>🎤</span> Mode vocal continu (comme ChatGPT)
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.15);font-size:12px;color:var(--a4)">
+        <span>🌐</span> Recherche web automatique
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;background:rgba(255,95,160,0.06);border:1px solid rgba(255,95,160,0.15);font-size:12px;color:var(--a3)">
+        <span>🎨</span> Génération d'images (Pollinations.ai)
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" onclick="closeSettings()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- API MODAL -->
+<div class="modal-overlay" id="apiModal" oncontextmenu="return false">
+  <div class="modal-box">
+    <div class="modal-title">🔑 API</div>
+    <div class="modal-desc">Clé intégrée active automatiquement — gratuit et illimité via MuleRouter.</div>
+    <div class="modal-warn">💡 Ce site utilise l'<strong>API MuleRouter</strong> (compatible OpenAI) avec une clé intégrée. Aucune configuration nécessaire.</div>
+    <div id="apiDefaultKeyStatus" style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;background:rgba(0,212,170,0.07);border:1px solid rgba(0,212,170,0.18);font-size:12px;color:var(--a2);margin-bottom:12px">
       <span>🔒</span> <span><strong>Clé intégrée active</strong></span>
     </div>
-    <div id="customKeySection" style="display:none">
-      <label class="modal-label">Votre clé (optionnel)</label>
+    <div id="apiCustomKeySection" style="display:none">
+      <label class="modal-label">Votre propre clé (optionnel)</label>
       <input class="modal-input" id="apiKeyInput" type="password" placeholder="sk-mr-..." spellcheck="false" oncopy="return false" oncut="return false">
     </div>
-    <button id="toggleCustomKey" onclick="toggleCustomKey()" style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:7px;border:1px solid var(--b2);background:var(--s1);color:var(--tx2);font-size:11px;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;width:100%;margin-bottom:12px;justify-content:center">➕ Ma propre clé</button>
+    <button id="apiToggleCustomKey" onclick="apiToggleCustomKey()" style="display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:7px;border:1px solid var(--b2);background:var(--s1);color:var(--tx2);font-size:11px;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif;width:100%;margin-bottom:12px;justify-content:center">➕ Ma propre clé</button>
     <div class="modal-actions">
-      <button class="modal-btn sec" onclick="closeSettings()">Fermer</button>
-      <button class="modal-btn primary" id="saveKeyBtn" onclick="saveSettings()" style="display:none">💾 Enregistrer</button>
+      <button class="modal-btn sec" onclick="closeAPISettings()">Fermer</button>
+      <button class="modal-btn primary" id="apiSaveKeyBtn" onclick="apiSaveSettings()" style="display:none">💾 Enregistrer</button>
     </div>
   </div>
 </div>
@@ -713,44 +747,52 @@ window.newChat = function() {
     const sec = document.getElementById('msgs');
     const wel = document.createElement('div');
     wel.className = 'welcome'; wel.id = 'welcome';
-    wel.innerHTML = `<h1>Let's get started.</h1><p>Développé par <strong>tom_visionai_pro</strong> — encore en chantier, mais déjà gratuit et illimité ✨<br>Propulsé par Qwen Flash via MuleRouter.</p><div class="img-suggest">${document.querySelector('.img-suggest')?.innerHTML || ''}</div>`;
+    wel.innerHTML = `<h1>Let's get started.</h1><p>Développé par <strong>tom_visionai_pro</strong> — encore en chantier, mais déjà gratuit et illimité ✨<br>Propulsé par Qwen Flash via MuleRouter.</p><div class="q-suggest">${document.querySelector('.q-suggest')?.innerHTML || ''}</div>`;
     sec.prepend(wel);
   }
   toast('🗑 Nouvelle conversation');
 };
 
 // SETTINGS
-window.toggleCustomKey = function() {
-  document.getElementById('defaultKeyStatus').style.display = 'none';
-  document.getElementById('toggleCustomKey').style.display = 'none';
-  document.getElementById('customKeySection').style.display = 'block';
-  document.getElementById('saveKeyBtn').style.display = 'block';
-  document.getElementById('apiKeyInput').value = '';
-  document.getElementById('apiKeyInput').focus();
-};
 window.openSettings = function() {
-  if (apiKey !== DEFAULT_API_KEY) {
-    document.getElementById('defaultKeyStatus').style.display = 'none';
-    document.getElementById('toggleCustomKey').style.display = 'none';
-    document.getElementById('customKeySection').style.display = 'block';
-    document.getElementById('saveKeyBtn').style.display = 'block';
-    document.getElementById('apiKeyInput').value = apiKey;
-  } else {
-    document.getElementById('defaultKeyStatus').style.display = 'flex';
-    document.getElementById('toggleCustomKey').style.display = 'flex';
-    document.getElementById('customKeySection').style.display = 'none';
-    document.getElementById('saveKeyBtn').style.display = 'none';
-  }
   document.getElementById('settingsModal').classList.add('show');
 };
 window.closeSettings = function() {
   document.getElementById('settingsModal').classList.remove('show');
 };
-window.saveSettings = function() {
+
+// API
+window.apiToggleCustomKey = function() {
+  document.getElementById('apiDefaultKeyStatus').style.display = 'none';
+  document.getElementById('apiToggleCustomKey').style.display = 'none';
+  document.getElementById('apiCustomKeySection').style.display = 'block';
+  document.getElementById('apiSaveKeyBtn').style.display = 'block';
+  document.getElementById('apiKeyInput').value = '';
+  document.getElementById('apiKeyInput').focus();
+};
+window.openAPISettings = function() {
+  if (apiKey !== DEFAULT_API_KEY) {
+    document.getElementById('apiDefaultKeyStatus').style.display = 'none';
+    document.getElementById('apiToggleCustomKey').style.display = 'none';
+    document.getElementById('apiCustomKeySection').style.display = 'block';
+    document.getElementById('apiSaveKeyBtn').style.display = 'block';
+    document.getElementById('apiKeyInput').value = apiKey;
+  } else {
+    document.getElementById('apiDefaultKeyStatus').style.display = 'flex';
+    document.getElementById('apiToggleCustomKey').style.display = 'flex';
+    document.getElementById('apiCustomKeySection').style.display = 'none';
+    document.getElementById('apiSaveKeyBtn').style.display = 'none';
+  }
+  document.getElementById('apiModal').classList.add('show');
+};
+window.closeAPISettings = function() {
+  document.getElementById('apiModal').classList.remove('show');
+};
+window.apiSaveSettings = function() {
   const key = document.getElementById('apiKeyInput').value.trim();
-  if (!key) { apiKey = DEFAULT_API_KEY; localStorage.removeItem('ds_api_key'); closeSettings(); toast('✓ Clé intégrée active'); return; }
+  if (!key) { apiKey = DEFAULT_API_KEY; localStorage.removeItem('ds_api_key'); closeAPISettings(); toast('✓ Clé intégrée active'); return; }
   if (!key.startsWith('sk-') && !key.startsWith('sk-mr-')) { toast('⚠️ Clé invalide (doit commencer par sk-mr-)'); return; }
-  apiKey = key; localStorage.setItem('ds_api_key', apiKey); closeSettings(); toast('✓ Clé personnelle enregistrée');
+  apiKey = key; localStorage.setItem('ds_api_key', apiKey); closeAPISettings(); toast('✓ Clé personnelle enregistrée');
 };
 
 // SEND
@@ -978,13 +1020,13 @@ function onKey(e){
   if(window.sendMsg) window.sendMsg();}
 }
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeSettings();
+  if (e.key === 'Escape') { closeSettings(); closeAPISettings(); }
 });
 
 loadHistory();
 
 document.addEventListener('contextmenu', function(e) {
-  if (e.target.closest('#settingsModal') || e.target.closest('.modal-overlay')) { e.preventDefault(); }
+  if (e.target.closest('.modal-overlay')) { e.preventDefault(); }
 });
 document.addEventListener('copy', function(e) {
   if (e.target.id === 'apiKeyInput') { e.preventDefault(); toast('🔒 Copie désactivée'); }
