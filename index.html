@@ -120,7 +120,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
   transition:all .2s;position:relative;
 }
 .img-card:hover{border-color:var(--b3);transform:translateY(-2px);}
-.img-card img{width:100%;height:100px;object-fit:cover;display:block;background:var(--s2);}
+.img-card img{width:100%;height:100px;object-fit:cover;display:block;background:linear-gradient(135deg,var(--a1),var(--a2));}
 .img-card-label{padding:8px 10px;font-size:12px;font-weight:500;color:var(--tx2);text-align:center;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
@@ -369,18 +369,18 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
     <section class="msgs" id="msgs">
       <div class="welcome" id="welcome">
         <h1>Let's get started.</h1>
-        <p>Assistant IA gratuit et illimité, propulsé par Qwen Flash via MuleRouter.</p>
+        <p>Développé par <strong>tom_visionai_pro</strong> — encore en chantier, mais déjà gratuit et illimité ✨<br>Propulsé par Qwen Flash via MuleRouter.</p>
         <div class="img-suggest">
-          <div class="img-card" onclick="quick('Génère une image de paysage futuriste cyberpunk avec des néons violets et bleus')">
-            <img src="https://image.pollinations.ai/prompt/futuristic%20cyberpunk%20cityscape%20with%20purple%20and%20blue%20neon%20lights%20flying%20cars" alt="Cyberpunk" loading="lazy">
+            <div class="img-card" onclick="quick('Génère une image de paysage futuriste cyberpunk avec des néons violets et bleus')">
+            <img src="https://image.pollinations.ai/prompt/futuristic%20cyberpunk%20cityscape%20with%20purple%20and%20blue%20neon%20lights%20flying%20cars?width=360&height=200" alt="Cyberpunk" onerror="this.style.display='none';this.nextElementSibling.style.background='linear-gradient(135deg,#7c3aed,#a855f7)'">
             <div class="img-card-label">Cyberpunk</div>
           </div>
           <div class="img-card" onclick="quick('Génère une image de montagne enneigée au coucher du soleil')">
-            <img src="https://image.pollinations.ai/prompt/snowy%20mountain%20peaks%20at%20sunset%20dramatic%20sky%20beautiful%20landscape" alt="Montagne" loading="lazy">
+            <img src="https://image.pollinations.ai/prompt/snowy%20mountain%20peaks%20at%20sunset%20dramatic%20sky%20beautiful%20landscape?width=360&height=200" alt="Montagne" onerror="this.style.display='none';this.nextElementSibling.style.background='linear-gradient(135deg,#2563eb,#38bdf8)'">
             <div class="img-card-label">Montagne</div>
           </div>
           <div class="img-card" onclick="quick('Génère une image de chat mignon avec des lunettes de soleil')">
-            <img src="https://image.pollinations.ai/prompt/cute%20cat%20wearing%20sunglasses%20cartoon%20style%20playful" alt="Chat" loading="lazy">
+            <img src="https://image.pollinations.ai/prompt/cute%20cat%20wearing%20sunglasses%20cartoon%20style%20playful?width=360&height=200" alt="Chat" onerror="this.style.display='none';this.nextElementSibling.style.background='linear-gradient(135deg,#f59e0b,#ef4444)'">
             <div class="img-card-label">Chat mignon</div>
           </div>
         </div>
@@ -417,8 +417,8 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',s
 <div class="modal-overlay" id="settingsModal" oncontextmenu="return false">
   <div class="modal-box">
     <div class="modal-title">🔒 Paramètres</div>
-    <div class="modal-desc">Clé intégrée active automatiquement — gratuit et illimité.</div>
-    <div class="modal-warn">🔓 Propulsé par <strong>Qwen Flash</strong> via MuleRouter.</div>
+    <div class="modal-desc">Développé par <strong>tom_visionai_pro</strong> — chantier en cours, améliorations à venir.</div>
+    <div class="modal-warn">🔓 Propulsé par <strong>Qwen Flash</strong> via MuleRouter (API intégrée, gratuit et illimité).<br><br>💡 <strong>API</strong> : ce site utilise l'API MuleRouter (compatible OpenAI) avec une clé intégrée. Aucune configuration nécessaire. Vous pouvez ajouter votre propre clé si souhaité.</div>
     <div id="defaultKeyStatus" style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;background:rgba(0,212,170,0.07);border:1px solid rgba(0,212,170,0.18);font-size:12px;color:var(--a2);margin-bottom:12px">
       <span>🔒</span> <span><strong>Clé intégrée active</strong></span>
     </div>
@@ -713,7 +713,7 @@ window.newChat = function() {
     const sec = document.getElementById('msgs');
     const wel = document.createElement('div');
     wel.className = 'welcome'; wel.id = 'welcome';
-    wel.innerHTML = `<h1>Let's get started.</h1><p>Assistant IA gratuit et illimité, propulsé par Qwen Flash via MuleRouter.</p><div class="img-suggest">${document.querySelector('.img-suggest')?.innerHTML || ''}</div>`;
+    wel.innerHTML = `<h1>Let's get started.</h1><p>Développé par <strong>tom_visionai_pro</strong> — encore en chantier, mais déjà gratuit et illimité ✨<br>Propulsé par Qwen Flash via MuleRouter.</p><div class="img-suggest">${document.querySelector('.img-suggest')?.innerHTML || ''}</div>`;
     sec.prepend(wel);
   }
   toast('🗑 Nouvelle conversation');
