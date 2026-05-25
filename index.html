@@ -28,7 +28,7 @@
   --r:14px;
 }
 html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%;}
-.app{display:flex;position:fixed;inset:0;}
+.app{display:flex;height:100%;overflow:hidden;}
 
 /* SIDEBAR */
 .sidebar{
@@ -1038,12 +1038,12 @@ document.addEventListener('keydown', function(e) {
 
 initConvs();
 
-// Mobile keyboard handling
+// Mobile: sync app height with visual viewport (keyboard, address bar)
 if (window.visualViewport) {
-  visualViewport.addEventListener('resize', () => {
-    const diff = window.innerHeight - visualViewport.height;
-    document.querySelector('.app').style.bottom = (diff > 100 ? diff : 0) + 'px';
-  });
+  const syncHeight = () => { document.querySelector('.app').style.height = visualViewport.height + 'px'; };
+  visualViewport.addEventListener('resize', syncHeight);
+  visualViewport.addEventListener('scroll', syncHeight);
+  syncHeight();
 }
 
 document.addEventListener('contextmenu', function(e) {
