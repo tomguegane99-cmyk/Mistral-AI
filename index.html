@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Qwen AI – Assistant Gratuit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@
   --r:16px;
   --rsm:10px;
 }
-html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;touch-action:manipulation;-webkit-text-size-adjust:100%;}
 
 .bg-scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .orb{position:absolute;border-radius:50%;filter:blur(100px);animation:orb-move 12s ease-in-out infinite;}
@@ -303,45 +303,80 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
   font-size:12px;color:var(--a4);line-height:1.6;
 }
 
-@media(max-width:600px){
+@media(max-width:640px){
   .msg-body{max-width:88%;}
   .quick-wrap{grid-template-columns:1fr;}
   .welcome h1{font-size:22px;}
-  .topbar{padding:12px 14px;}
-  .input-zone{padding:12px 14px;}
-  .msgs{padding:14px;}
-  .model-bar{padding:6px 14px;flex-wrap:nowrap;}
-  .model-bar{justify-content:flex-start;}
-  .modal-box{padding:20px;margin:10px;}
+  .topbar{padding:10px 10px;gap:6px;}
+  .input-zone{padding:10px 10px;padding-bottom:max(10px,env(safe-area-inset-bottom,0px));}
+  .msgs{padding:12px;gap:14px;}
+  .model-bar{padding:6px 10px;flex-wrap:nowrap;overflow-x:auto;gap:4px;touch-action:pan-x;}
+  .mb-btn{font-size:11px;padding:5px 10px;flex-shrink:0;}
+  .voice-btn{font-size:10px;padding:3px 8px;}
+  .modal-box{padding:20px;margin:10px;border-radius:16px;}
   .brand-tag{display:none;}
-  .bbl{font-size:14px;padding:11px 14px;}
+  .bbl{font-size:14px;padding:11px 14px;border-radius:14px;}
   .cblock pre{font-size:11px;padding:10px;}
-  .btn-send{width:42px;height:42px;font-size:18px;}
-  .btn-mic{width:38px;height:38px;font-size:16px;}
+  .btn-send{width:40px;height:40px;font-size:17px;border-radius:10px;}
+  .settings-btn{width:30px;height:30px;font-size:13px;}
   .welcome-icon{font-size:44px;}
-}
-@media(max-width:480px){
-  .brand-name{font-size:15px;}
-  .brand-gem{width:30px;height:30px;font-size:14px;}
-  .settings-btn{width:28px;height:28px;font-size:12px;}
-  .status-pill{padding:4px 8px;}
-  .status-pill span{display:none;}
-  .msg-body{max-width:92%;}
-  .av{width:28px;height:28px;font-size:13px;}
-  .msg-row{gap:8px;}
-  .bbl{font-size:13px;padding:10px 12px;border-radius:14px;}
-  .welcome h1{font-size:19px;}
-  .welcome p{font-size:13px;}
+  .welcome{padding:20px 14px;gap:12px;}
   .qcard{padding:12px 14px;}
-  .qcard-t{font-size:12px;}
-  .modal-box{padding:16px;margin:8px;border-radius:16px;}
-  .orb1{width:300px;height:300px;top:-80px;left:-60px;}
-  .orb2{width:250px;height:250px;bottom:-60px;right:-50px;}
-  .orb3{width:200px;height:200px;top:50%;left:50%;}
-  #inp{font-size:14px;}
   .inp-wrap{padding:8px 8px 8px 14px;border-radius:14px;}
-  .btn-send{width:38px;height:38px;font-size:16px;}
-  .inp-hint{font-size:10px;}
+  #inp{font-size:14px;}
+  .brand-name{font-size:16px;}
+  .brand-gem{width:32px;height:32px;font-size:14px;border-radius:9px;}
+  .vo-icon{font-size:48px;}
+  .vo-status{font-size:16px;}
+  .vo-text{font-size:14px;}
+  .vo-stop{padding:12px 24px;font-size:13px;}
+@media(max-width:480px){
+  .brand-name{font-size:14px;}
+  .brand-gem{width:28px;height:28px;font-size:13px;border-radius:8px;}
+  .settings-btn{width:26px;height:26px;font-size:11px;border-radius:6px;}
+  .status-pill{padding:3px 6px;}
+  .status-pill span{display:none;}
+  .status-dot{width:6px;height:6px;}
+  .msg-body{max-width:92%;}
+  .av{width:26px;height:26px;font-size:12px;border-radius:8px;}
+  .msg-row{gap:6px;}
+  .bbl{font-size:13px;padding:9px 11px;border-radius:12px;}
+  .ai-bbl{border-radius:3px 12px 12px 12px;}
+  .usr-bbl{border-radius:12px 3px 12px 12px;}
+  .welcome h1{font-size:18px;}
+  .welcome p{font-size:12px;}
+  .welcome-icon{font-size:36px;}
+  .qcard{padding:10px 12px;}
+  .qcard-t{font-size:12px;}
+  .qcard-d{font-size:10px;}
+  .qcard-ico{font-size:18px;margin-bottom:4px;}
+  .quick-wrap{gap:7px;}
+  .modal-box{padding:14px;margin:6px;border-radius:14px;}
+  .modal-title{font-size:16px;}
+  .modal-desc{font-size:12px;}
+  .modal-input{font-size:12px;padding:8px 12px;}
+  .orb1{width:200px;height:200px;top:-60px;left:-40px;}
+  .orb2{width:180px;height:180px;bottom:-40px;right:-30px;}
+  .orb3{width:140px;height:140px;top:50%;left:50%;}
+  #inp{font-size:13.5px;}
+  .inp-wrap{padding:6px 6px 6px 12px;border-radius:12px;gap:4px;}
+  .btn-send{width:36px;height:36px;font-size:15px;border-radius:9px;}
+  .inp-hint{font-size:9px;}
+  .topbar{padding:8px 10px;gap:4px;}
+  .input-zone{padding:8px 10px;}
+  .msgs{padding:10px;gap:10px;}
+  .model-bar{padding:4px 8px;gap:3px;}
+  .mb-btn{font-size:10px;padding:4px 8px;}
+  .voice-btn{font-size:9px;padding:3px 6px;}
+  .vo-icon{font-size:40px;}
+  .vo-status{font-size:14px;}
+  .vo-text{font-size:13px;}
+  .vo-sub{font-size:11px;}
+  .vo-stop{padding:10px 20px;font-size:12px;margin-top:20px;}
+  .cblock pre{font-size:10px;padding:8px;}
+  .cblock-hdr{padding:5px 10px;}
+  .clang{font-size:9px;}
+  .ccopy{font-size:9px;padding:2px 6px;}
 }
 </style>
 </head>
@@ -366,6 +401,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
         <div class="status-dot" id="statusDot"></div>
         <span id="statusTxt">Prêt</span>
       </div>
+      <button class="settings-btn" onclick="newChat()" title="Nouvelle conversation">🗑</button>
       <button class="settings-btn" onclick="openSettings()" title="Paramètres API">⚙</button>
     </div>
   </header>
@@ -377,6 +413,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Outfit',
     <button class="mb-btn" data-model="qwen3.5-plus" data-temp="0.7" onclick="selModel(this)">🧠 3.5 Plus (précis)</button>
     <button class="mb-btn" data-model="qwen3-max" data-temp="0.5" onclick="selModel(this)">🔍 3 Max (raisonnement)</button>
     <button class="mb-btn" id="searchBtn" onclick="toggleSearch()">🌐 Web</button>
+    <button class="mb-btn" id="imgBtn" onclick="toggleImage()">🎨 Image</button>
     <button class="voice-btn" id="voiceBtn" onclick="startVoiceChat()" style="background:rgba(79,142,255,0.12);border-color:rgba(79,142,255,0.3);color:var(--a1)">🎤 Vocal</button>
   </div>
 
@@ -482,6 +519,7 @@ let generating = false;
 let abortController = null;
 let conversationHistory = [];
 let searchEnabled = false;
+let imageMode = false;
 
 // Accès intégré. L'utilisateur peut ajouter sa propre clé dans les paramètres.
 
@@ -638,6 +676,7 @@ async function voiceChatSend(text) {
     conversationHistory.push({ role: 'user', content: text });
     conversationHistory.push({ role: 'assistant', content: reply });
     if (conversationHistory.length > 40) conversationHistory = conversationHistory.slice(-40);
+    saveHistory(); saveMessages();
 
     const shortReply = reply.replace(/```[\s\S]*?```/g, '[code]').replace(/[#*•>\-\[\]]/g, '').replace(/\n+/g, ' ').substring(0, 120);
     setVoState('🔊', 'Qwen AI répond…', '', shortReply, 'speaking');
@@ -696,12 +735,84 @@ if (window.speechSynthesis) {
 }
 
 // ══════════════════════════════════════════
-// WEB SEARCH TOGGLE
+// WEB SEARCH & IMAGE TOGGLE
 // ══════════════════════════════════════════
 window.toggleSearch = function() {
   searchEnabled = !searchEnabled;
+  if (imageMode) toggleImage();
   document.getElementById('searchBtn').classList.toggle('sel');
   toast(searchEnabled ? '🌐 Recherche web activée' : '🌐 Web désactivé');
+};
+
+window.toggleImage = function() {
+  imageMode = !imageMode;
+  document.getElementById('imgBtn').classList.toggle('sel');
+  document.getElementById('inp').placeholder = imageMode ? 'Décrivez l\'image à générer…' : 'Posez votre question…';
+  if (imageMode && searchEnabled) toggleSearch();
+  toast(imageMode ? '🎨 Mode image activé' : '🎨 Mode image désactivé');
+};
+
+async function generateImage(prompt) {
+  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`;
+  const imgWrap = document.createElement('div');
+  imgWrap.style.cssText = 'margin:10px 0;border-radius:12px;overflow:hidden;background:rgba(0,0,0,0.3);';
+  const img = document.createElement('img');
+  img.style.cssText = 'width:100%;display:block;border-radius:12px;';
+  img.alt = prompt;
+  const loadPromise = new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; });
+  img.src = url;
+  await loadPromise;
+  imgWrap.appendChild(img);
+  return imgWrap;
+}
+
+// ══════════════════════════════════════════
+// HISTORY PERSISTENCE
+// ══════════════════════════════════════════
+function saveHistory() {
+  try {
+    localStorage.setItem('qh_hist', JSON.stringify(conversationHistory));
+  } catch(e) {}
+}
+
+function loadHistory() {
+  try {
+    const h = localStorage.getItem('qh_hist');
+    if (h) conversationHistory = JSON.parse(h);
+    const msgs = localStorage.getItem('qh_msgs');
+    if (msgs && conversationHistory.length) {
+      const rows = JSON.parse(msgs);
+      rows.forEach(r => addMsg(r.role, r.content));
+    }
+  } catch(e) {}
+}
+
+function saveMessages() {
+  try {
+    const rows = [];
+    document.querySelectorAll('.msg-row').forEach(el => {
+      const role = el.classList.contains('usr') ? 'user' : 'ai';
+      const content = el.querySelector('.bbl')?.innerText || '';
+      if (content) rows.push({ role, content });
+    });
+    localStorage.setItem('qh_msgs', JSON.stringify(rows));
+  } catch(e) {}
+}
+
+window.newChat = function() {
+  conversationHistory = [];
+  document.getElementById('msgs').querySelectorAll('.msg-row').forEach(el => el.remove());
+  localStorage.removeItem('qh_hist');
+  localStorage.removeItem('qh_msgs');
+  const w = document.getElementById('welcome');
+  if (!w) {
+    const sec = document.getElementById('msgs');
+    const wel = document.createElement('div');
+    wel.className = 'welcome'; wel.id = 'welcome';
+    wel.innerHTML = document.querySelector('.welcome')?.innerHTML || '';
+    sec.prepend(wel);
+  }
+  toast('🗑 Nouvelle conversation');
 };
 
 // ══════════════════════════════════════════
@@ -760,7 +871,6 @@ window.sendMsg = async function() {
   const text = inp.value.trim();
   if (!text || generating) return;
 
-  // La clé API est déjà intégrée par défaut
   if (!apiKey) {
     apiKey = DEFAULT_API_KEY;
   }
@@ -768,6 +878,33 @@ window.sendMsg = async function() {
   hideWelcome();
   addMsg('user', text);
   inp.value = ''; inp.style.height = 'auto';
+
+  // IMAGE MODE
+  if (imageMode) {
+    setStatus('thinking', 'Génération image…');
+    const typingId = addTyping();
+    try {
+      removeTyping(typingId);
+      const imgEl = await generateImage(text);
+      const msgs = document.getElementById('msgs');
+      const row = document.createElement('div');
+      row.className = 'msg-row';
+      row.innerHTML = `<div class="av ai-av">🧠</div><div class="msg-body"><div class="msg-name">Qwen AI</div><div class="bbl ai-bbl"><strong>🎨 Image générée :</strong><br>${text}</div></div>`;
+      row.querySelector('.bbl').after(imgEl);
+      row.querySelector('.msg-body').appendChild(imgEl);
+      msgs.appendChild(row);
+      msgs.scrollTop = 99999;
+      conversationHistory.push({ role: 'user', content: text });
+      conversationHistory.push({ role: 'assistant', content: '[Image: ' + text + ']' });
+    } catch(e) {
+      removeTyping(typingId);
+      addMsg('ai', '⚠️ Erreur génération image: ' + e.message);
+    }
+    generating = false;
+    setStatus('ready', 'Prêt');
+    saveHistory(); saveMessages();
+    return;
+  }
 
   generating = true;
   document.getElementById('btnSend').disabled = true;
@@ -852,7 +989,6 @@ window.sendMsg = async function() {
     conversationHistory.push({ role: 'user', content: text });
     conversationHistory.push({ role: 'assistant', content: fullReply });
 
-    // Keep conversation manageable (last 20 messages)
     if (conversationHistory.length > 40) {
       conversationHistory = conversationHistory.slice(-40);
     }
@@ -874,6 +1010,7 @@ window.sendMsg = async function() {
   document.getElementById('btnSend').disabled = false;
   document.getElementById('btnStop').classList.remove('vis');
   setStatus('ready', 'Prêt');
+  saveHistory(); saveMessages();
 };
 
 window.stopGen = function() {
@@ -1013,6 +1150,9 @@ function onKey(e){
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeSettings();
 });
+
+// Restore conversation history
+loadHistory();
 
 // Protection anti-copie de la clé
 document.addEventListener('contextmenu', function(e) {
